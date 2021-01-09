@@ -39,6 +39,15 @@
     const titleElem = e.target.parentNode.parentNode.querySelector('.dropdown .title');
     const icon = e.target.parentNode.parentNode.querySelector('.dropdown .title .fa');
 
+    if (e.target.className.indexOf('option') == -1){
+      if(e.target.className.indexOf('unselected') !== -1){
+        e.target.classList.replace('unselected','selected');
+      }else{
+        e.target.classList.replace('selected','unselected');
+      }
+      return;
+    }
+
     var premsg = "Something went wrong: ";
 
 
@@ -63,14 +72,6 @@
     titleElem.textContent = premsg+newValue;
     titleElem.appendChild(icon);
 
-    if (e.target.className.indexOf('option') == -1){
-      if(e.target.className.indexOf('unselected') !== -1){
-        e.target.classList.replace('unselected','selected');
-      }else{
-        e.target.classList.replace('selected','unselected');
-      }
-      return;
-    }
     toggleClass(e.target.parentNode, 'hide');
 
     //trigger custom event
