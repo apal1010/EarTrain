@@ -32,7 +32,7 @@
   }
   
   function handleOptionSelected(e){
-    toggleClass(e.target.parentNode, 'hide');			
+    			
   
     const id = e.target.id;
     const newValue = e.target.textContent + ' ';
@@ -51,6 +51,10 @@
         premsg = "Instrument: "
         break;
 
+      case 'order':
+        premsg = "Order: "
+        break;
+
       default:
         break;
     }
@@ -58,7 +62,17 @@
   
     titleElem.textContent = premsg+newValue;
     titleElem.appendChild(icon);
-  
+
+    if (e.target.className.indexOf('option') == -1){
+      if(e.target.className.indexOf('unselected') !== -1){
+        e.target.classList.replace('unselected','selected');
+      }else{
+        e.target.classList.replace('selected','unselected');
+      }
+      return;
+    }
+    toggleClass(e.target.parentNode, 'hide');
+
     //trigger custom event
     titleElem.dispatchEvent(new Event('change'));
       //setTimeout is used so transition is properly shown
@@ -74,11 +88,16 @@
   //get elements
   const dropdownTitle = document.querySelectorAll('.dropdown .title');
   const dropdownOptions = document.querySelectorAll('.dropdown .option');
-  
+  const dropdownSelected = document.querySelectorAll('.dropdown .selected');
+  const dropdownUnSelected = document.querySelectorAll('.dropdown .unselected');
+
+   
   //bind listeners to these elements
   dropdownTitle.forEach(dropdown => dropdown.addEventListener('click', toggleMenuDisplay));
   
   dropdownOptions.forEach(option => option.addEventListener('click',handleOptionSelected));
+  dropdownSelected.forEach(selected => selected.addEventListener('click',handleOptionSelected));
+  dropdownUnSelected.forEach(unselected => unselected.addEventListener('click',handleOptionSelected));
   
   dropdownTitle.forEach(title=>title.addEventListener('change', handleTitleChange));
 

@@ -13,7 +13,6 @@ body{
 	width: 250px;
 	margin: 1em;
 	text-align: center;
-	color: rebeccapurple;
 }
 
 .dropdown .title{
@@ -39,8 +38,29 @@ body{
 	margin-top: 0.3em;
 }
 
+.dropdown .menu .selected{
+	margin: .3em .3em .3em .3em;
+	font-size: 12px;
+	margin-top: 0.3em;
+	background: rgba(132, 0, 255, 0.493);
+}
+
+.dropdown .menu .unselected{
+	margin: .3em .3em .3em .3em;
+	font-size: 12px;
+	margin-top: 0.3em;
+}
+
 .dropdown .menu .option:hover{
 	background: rgba(0,0,0,0.2);
+}
+
+.dropdown .menu .selected:hover{
+	background: rgba(204, 0, 255, 0.37);
+}
+
+.dropdown .menu .unselected:hover{
+	background: rgba(204, 0, 255, 0.264);
 }
 
 .pointerCursor:hover{
@@ -49,4 +69,8 @@ body{
 
 .rotate-90{
 	transform: rotate(90deg);
+}
+
+p.clear{
+	clear: both;
 }

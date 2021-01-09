@@ -41,19 +41,47 @@
         </div>
     
       </div>
+      
       <div class='dropdown'>
         <div class='title pointerCursor' id = 'instrument'>Select an instrument <b class="fa fa-angle-right">></b></div>
         
         <div class='menu pointerCursor hide'>
-          <div class='option' id='option1'  >Piano</div>
-          <div class='option' id='option2'  >Guitar</div>
-          <div class='option' id='option3'  >Pure Tone</div>
+          <div class='option' id='optionPi'  >Piano</div>
+          <div class='option' id='optionGu'  >Guitar</div>
+          <div class='option' id='optionPt'  >Pure Tone</div>
         </div>
     
       </div>
-      <span id='result' style="text-align: center; font-size: small;">The result is: </span>
+
+      <div class='dropdown'>
+        <div class='title pointerCursor' id = 'order'>Select chords from order?? <b class="fa fa-angle-right">></b></div>
+        
+        <div class='menu pointerCursor hide'>
+          <div>Order of the Chords</div>
+          <div class='unselected' id='c1'  >I</div>
+          <div class='unselected' id='c2'  >II-</div>
+          <div class='unselected' id='c3'  >III-</div>
+          <div class='unselected' id='c4'  >IV</div>
+          <div class='unselected' id='c5'  >V</div>
+          <div class='unselected' id='c6'  >VI-</div>
+          <div class='unselected' id='c7'  >VII<sup>o</sup></div>
+          
+          <div>Order of 7th Chords</div>
+          <div class='unselected' id='d1'  >Imaj7</div>
+          <div class='unselected' id='d2'  >II-7</div>
+          <div class='unselected' id='d3'  >III-7</div>
+          <div class='unselected' id='d4'  >IVmaj7</div>
+          <div class='unselected' id='d5'  >V7</div>
+          <div class='unselected' id='d6'  >VI-7</div>
+          <div class='unselected' id='d7'  >VII<sup>&#xF8;</sup></div>
+        </div>
+    
+      </div>
+      <p></p>
+      <p span class = 'clear' id='result' style="text-align: center; font-size: small;">The result is: </p span>
       <script src="script.js"></script>
-   </div>
+    
+  </div>
    
  </body>
 </html>
