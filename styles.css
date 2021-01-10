@@ -51,6 +51,12 @@ body{
 	margin-top: 0.3em;
 }
 
+.dropdown .menu .batchselect{
+	margin: .3em .3em .3em .3em;
+	font-size: 16px;
+	margin-top: 0.3em;
+}
+
 .dropdown .menu .option:hover{
 	background: rgba(0,0,0,0.2);
 }
@@ -60,6 +66,10 @@ body{
 }
 
 .dropdown .menu .unselected:hover{
+	background: rgba(204, 0, 255, 0.264);
+}
+
+.dropdown .menu .batchselect:hover{
 	background: rgba(204, 0, 255, 0.264);
 }
 

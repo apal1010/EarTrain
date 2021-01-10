@@ -30,6 +30,55 @@
     menu.forEach(men=>toggleClass(men,'hide'));
     icon.forEach(arrow=>toggleClass(arrow,'rotate-90'));
   }
+
+  function swapselect(e){
+    if(e.className.indexOf('unselected') !== -1){
+      e.classList.replace('unselected','selected');
+    }else{
+      e.classList.replace('selected','unselected');
+      if(e.id.indexOf('t')!==-1){
+        tbatch = true;
+      }else{
+        sbatch = true;
+      }
+    }
+    return;
+  }
+
+  function checkbatch(batch){
+    all = true;
+    none = true;
+    for (let index = 1; index < 8; index++) {
+      const element = document.getElementById(batch+index.toString());
+      if(element.className.indexOf('unselected')!==-1){
+        all = false;
+      }else{
+        none = false;
+      }
+    }
+    if(batch='t'){
+      if(all){
+        tbatch=true;
+      }else if(none){
+        tbatch=false;
+      }
+    }else{
+      if(all){
+        sbatch=true;
+      }else if(none){
+        sbatch=false;
+      }
+    }
+  }
+
+  function setselect(e,val){
+    if(val){
+      e.classList.replace('unselected','selected');
+    }else{
+      e.classList.replace('selected','unselected');
+    }
+    return;
+  }
   
   function handleOptionSelected(e){
     			
@@ -40,11 +89,23 @@
     const icon = e.target.parentNode.parentNode.querySelector('.dropdown .title .fa');
 
     if (e.target.className.indexOf('option') == -1){
-      if(e.target.className.indexOf('unselected') !== -1){
-        e.target.classList.replace('unselected','selected');
-      }else{
-        e.target.classList.replace('selected','unselected');
+      if(e.target.className.indexOf('batchselect')!==-1){
+        var batch = false;
+        if(id=='t'){
+          batch=tbatch;
+          tbatch = !tbatch;
+        }else{
+          batch=sbatch;
+          sbatch = !sbatch;
+        }
+        for (let index = 1; index < 8; index++) {
+          const element = document.getElementById(id+index.toString());
+          setselect(element,!batch);
+        }
+        return;
       }
+      swapselect(e.target);
+      checkbatch(e.target.id.charAt(0));
       return;
     }
 
@@ -91,6 +152,7 @@
   const dropdownOptions = document.querySelectorAll('.dropdown .option');
   const dropdownSelected = document.querySelectorAll('.dropdown .selected');
   const dropdownUnSelected = document.querySelectorAll('.dropdown .unselected');
+  const dropdownBatchSelect = document.querySelectorAll('.dropdown .batchselect');
 
    
   //bind listeners to these elements
@@ -99,8 +161,12 @@
   dropdownOptions.forEach(option => option.addEventListener('click',handleOptionSelected));
   dropdownSelected.forEach(selected => selected.addEventListener('click',handleOptionSelected));
   dropdownUnSelected.forEach(unselected => unselected.addEventListener('click',handleOptionSelected));
+  dropdownBatchSelect.forEach(batchselect => batchselect.addEventListener('click',handleOptionSelected));
   
   dropdownTitle.forEach(title=>title.addEventListener('change', handleTitleChange));
+
+  var tbatch = false;
+  var sbatch = false;
 
   const stuff = document.getElementById('stuff');
   stuff.style.maxWidth = (screen.width-250)/4;
