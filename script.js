@@ -170,8 +170,17 @@
     }else{
       mySound.play();
     }
+    document.getElementById('button').dispatchEvent(new Event('reveal'));
     played=!played;
     
+  }
+
+  function handleButton(e){
+    if(e.target.innerHTML.indexOf('Play')!==-1){
+      e.target.innerHTML = 'reveal';
+    }else{
+      e.target.innerHTML = 'Play ';
+    }
   }
   
   //get elements
@@ -185,6 +194,7 @@
    
   //bind listeners to these elements
   button.addEventListener('click', playnoise);
+  button.addEventListener('reveal', handleButton);
   document.addEventListener('keydown', (e)=>{if(e.code==="Space") playnoise(e)});
 
   dropdownTitle.forEach(dropdown => dropdown.addEventListener('click', toggleMenuDisplay));
