@@ -105,7 +105,7 @@
         return;
       }
       swapselect(e.target);
-      checkbatch(e.target.id.charAt(0));
+      //checkbatch(e.target.id.charAt(0));
       return;
     }
 
@@ -144,10 +144,38 @@
   function handleTitleChange(e){
     const result = document.getElementById('result');
   
-    result.innerHTML = 'The result is: ' + e.target.textContent;
+    if(played){
+      result.innerHTML = 'This chord is: ' + Math.random().toString();
+    }
+  }
+
+  function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+      this.sound.play();
+    }
+    this.stop = function(){
+      this.sound.pause();
+    }
+  }
+
+  function playnoise(e){
+    if(played){
+      e.target.parentNode.parentNode.querySelector('.dropdown .title').dispatchEvent(new Event('change'));
+    }else{
+      mySound.play();
+    }
+    played=!played;
+    
   }
   
   //get elements
+  const button = document.querySelector('.button');
   const dropdownTitle = document.querySelectorAll('.dropdown .title');
   const dropdownOptions = document.querySelectorAll('.dropdown .option');
   const dropdownSelected = document.querySelectorAll('.dropdown .selected');
@@ -156,6 +184,9 @@
 
    
   //bind listeners to these elements
+  button.addEventListener('click', playnoise);
+  document.addEventListener('keydown', (e)=>{if(e.code==="Space") playnoise(e)});
+
   dropdownTitle.forEach(dropdown => dropdown.addEventListener('click', toggleMenuDisplay));
   
   dropdownOptions.forEach(option => option.addEventListener('click',handleOptionSelected));
@@ -165,8 +196,13 @@
   
   dropdownTitle.forEach(title=>title.addEventListener('change', handleTitleChange));
 
-  var tbatch = false;
-  var sbatch = false;
+  var tbatch = true;
+  var sbatch = true;
+  var played = false;
+
+  var d = new Date();
+
+  mySound = new sound("obi-wan-hello-there.mp3");
 
   const stuff = document.getElementById('stuff');
   stuff.style.maxWidth = (screen.width-250)/4;
