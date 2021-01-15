@@ -169,11 +169,12 @@
       e.target.parentNode.parentNode.querySelector('.dropdown .title').dispatchEvent(new Event('change'));
     }else{
       //mySound.play();
-      synth.triggerAttackRelease("A3","4n");
+      //synth.triggerAttackRelease("A4","2n");
       //console.log(chordData["Triads"]["C"]["Imaj"]);
       var chord = generateRandChord();
-      chord = applyInversion(chord);
+      //chord = applyInversion(chord);
       playedChord+=", notes are: " + chord;
+      playChord(chord);
       console.log(chord);
       
     }
@@ -214,14 +215,14 @@
         case 1:
           chord[0] = chord[0].substring(0,chord[0].length-1)+(parseInt(chord[0].charAt(chord[0].length-1))+1);
           if(Math.random()>0.5){
-            chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))+1).toString();
+            chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))+1);
           }
           playedChord += ", 1st inversion"
           return chord;
           break;
 
         case 2:
-          chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))-1).toString();
+          chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))-1);
           playedChord += ", 2nd inversion"
           return chord;
           break;
@@ -273,8 +274,27 @@
     
   }
 
-  function makeChord(root, formula, duration){
-    
+  function playChord(chord){
+    var instrument = document.getElementById("instrument").textContent.substring(12);
+    instrument = instrument.substring(0,instrument.length-2);
+    console.log(instrument);
+    switch (instrument) {
+      case "Piano":
+        piano.triggerAttackRelease(chord,"2n");
+        break;
+      
+      case "Guitar":
+        guitar.triggerAttackRelease(chord,"2n");
+        break;
+
+      case "Synth":
+        synth.triggerAttackRelease(chord,"2n");
+        break;
+
+      default:
+        synth.triggerAttackRelease(chord,"2n");
+        break;
+    }
   }
 
   //-------Globals--------------
@@ -314,11 +334,32 @@
 
   var d = new Date();
 
-  const chordData = JSON.parse('{"Triads": {    "C": {        "Imaj": ["C4","E4","G4"],        "II-": ["D4","F4","A4"],        "III-": ["E4","G4","B4"],        "IVmaj": ["F4","A4","C5"],        "Vmaj": ["G3","B3","D4"],        "VI-": ["A3","C4","E4"],        "VIIo": ["B3","D4","F4"]    },    "G": {        "Imaj": ["G3","B3","D4"],        "II-": ["A3","C4","E4"],        "III-": ["B3","D4","F#4"],        "IVmaj": ["C4","E4","G4"],        "Vmaj": ["D4","F#4","A4"],        "VI-": ["E4","G4","B4"],        "VIIo": ["F#4","A4","C5"]    },    "D": {        "Imaj": ["D4","F#4","A4"],        "II-": ["E4","G4","B4"],        "III-": ["F#4","A4","C#5"],        "IVmaj": ["G4","B4","D5"],        "Vmaj": ["A3","C#4","E4"],        "VI-": ["B3","D4","F#4"],        "VIIo": ["C#4","E4","G4"]    },    "A": {        "Imaj": ["A3","C#4","E4"],        "II-": ["B3","D4","F#4"],        "III-": ["C#4","E4","G#4"],        "IVmaj": ["D4","F#4","A4"],        "Vmaj": ["E4","G#4","B4"],        "VI-": ["F#4","A4","C#5"],        "VIIo": ["G#4","B4","D5"]    },    "E": {        "Imaj": ["E4","G#4","B4"],        "II-": ["F#4","A4","C#5"],        "III-": ["G#3","B3","D#4"],        "IVmaj": ["A3","C#4","E4"],        "Vmaj": ["B3","D#4","F#4"],        "VI-": ["C#4","E4","G#4"],        "VIIo": ["D#4","F#4","A4"]    },    "B": {        "Imaj": ["B3","D#4","F#4"],        "II-": ["C#4","E4","G#4"],        "III-": ["D#4","F#4","A#4"],        "IVmaj": ["E4","G#4","B4"],        "Vmaj": ["F#4","A#4","C#5"],        "VI-": ["G#4","B4","D#5"],        "VIIo": ["A#3","C#4","E4"]    },    "Cb": {        "Imaj": ["Cb3","Eb4","Gb4"],        "II-": ["Db4","Fb4","Ab4"],        "III-": ["Eb4","Gb4","Bb4"],        "IVmaj": ["Fb4","Ab4","Cb5"],        "Vmaj": ["Gb4","Bb4","Db5"],        "VI-": ["Ab4","Cb4","Eb5"],        "VIIo": ["Bb3","Db4","Fb4"]    },    "F#": {        "Imaj": ["F#4","A#4","C#5"],        "II-": ["G#4","B4","D#5"],        "III-": ["A#3","C#4","E#4"],        "IVmaj": ["B3","D#4","F#4"],        "Vmaj": ["C#4","E#4","G#4"],        "VI-": ["D#4","F#4","A#4"],        "VIIo": ["E#4","G#4","B4"]    },    "Gb": {        "Imaj": ["Gb4","Bb4","Db5"],        "II-": ["Ab4","Cb4","Eb5"],        "III-": ["Bb3","Db4","F4"],        "IVmaj": ["Cb","Eb4","Gb4"],        "Vmaj": ["Db4","F4","Ab4"],        "VI-": ["Eb4","Gb4","Bb4"],        "VIIo": ["F4","Ab4","Cb4"]    },    "C#": {        "Imaj": ["C#4","E#4","G#4"],        "II-": ["D#4","F#4","A#4"],        "III-": ["E#4","G#4","B#4"],        "IVmaj": ["F#4","A#4","C#5"],        "Vmaj": ["G#3","B#3","D#4"],        "VI-": ["A#3","C#4","E#4"],        "VIIo": ["B#3","D#4","F#4"]    },    "Db": {        "Imaj": ["Db4","F4","Ab4"],        "II-": ["Eb4","Gb4","Bb4"],        "III-": ["F4","Ab4","C4"],        "IVmaj": ["Gb4","Bb4","Db5"],        "Vmaj": ["Ab3","C3","Eb4"],        "VI-": ["Bb3","Db4","F4"],        "VIIo": ["C3","Eb4","Gb4"]    },    "Ab": {        "Imaj": ["Ab3","C4","Eb4"],        "II-": ["Bb3","Db4","F4"],        "III-": ["C4","Eb4","G4"],        "IVmaj": ["Db4","F4","Ab4"],        "Vmaj": ["Eb4","G4","Bb4"],        "VI-": ["F4","Ab4","C5"],        "VIIo": ["G4","Bb4","Db5"]    },    "Eb": {        "Imaj": ["Eb4","G4","Bb4"],        "II-": ["F4","Ab4","C5"],        "III-": ["G3","Bb3","D4"],        "IVmaj": ["Ab3","C4","Eb4"],        "Vmaj": ["Bb3","D4","F4"],        "VI-": ["C4","Eb4","G4"],        "VIIo": ["D4","F4","Ab4"]    },    "Bb": {        "Imaj": ["Bb3","D4","F4"],        "II-": ["C4","Eb4","G4"],        "III-": ["D4","F4","A4"],        "IVmaj": ["Eb4","G4","Bb4"],        "Vmaj": ["F4","A4","C5"],        "VI-": ["G4","Bb4","D5"],        "VIIo": ["A3","C4","Eb4"]    },    "F": {        "Imaj": ["F4","A4","C5"],        "II-": ["G4","Bb4","D5"],        "III-": ["A3","C4","E4"],        "IVmaj": ["Bb3","D4","F4"],        "Vmaj": ["C4","E4","G4"],        "VI-": ["D4","F4","A4"],        "VIIo": ["E4","G4","Bb4"]    }    }}');
+  const chordData = JSON.parse('{"Triads": {    "C": {        "Imaj": ["C4","E4","G4"],        "II-": ["D4","F4","A4"],        "III-": ["E4","G4","B4"],        "IVmaj": ["F4","A4","C5"],        "Vmaj": ["G3","B3","D4"],        "VI-": ["A3","C4","E4"],        "VIIo": ["B3","D4","F4"]    },    "G": {        "Imaj": ["G3","B3","D4"],        "II-": ["A3","C4","E4"],        "III-": ["B3","D4","F#4"],        "IVmaj": ["C4","E4","G4"],        "Vmaj": ["D4","F#4","A4"],        "VI-": ["E4","G4","B4"],        "VIIo": ["F#4","A4","C5"]    },    "D": {        "Imaj": ["D4","F#4","A4"],        "II-": ["E4","G4","B4"],        "III-": ["F#4","A4","C#5"],        "IVmaj": ["G4","B4","D5"],        "Vmaj": ["A3","C#4","E4"],        "VI-": ["B3","D4","F#4"],        "VIIo": ["C#4","E4","G4"]    },    "A": {        "Imaj": ["A3","C#4","E4"],        "II-": ["B3","D4","F#4"],        "III-": ["C#4","E4","G#4"],        "IVmaj": ["D4","F#4","A4"],        "Vmaj": ["E4","G#4","B4"],        "VI-": ["F#4","A4","C#5"],        "VIIo": ["G#4","B4","D5"]    },    "E": {        "Imaj": ["E4","G#4","B4"],        "II-": ["F#4","A4","C#5"],        "III-": ["G#3","B3","D#4"],        "IVmaj": ["A3","C#4","E4"],        "Vmaj": ["B3","D#4","F#4"],        "VI-": ["C#4","E4","G#4"],        "VIIo": ["D#4","F#4","A4"]    },    "B": {        "Imaj": ["B3","D#4","F#4"],        "II-": ["C#4","E4","G#4"],        "III-": ["D#4","F#4","A#4"],        "IVmaj": ["E4","G#4","B4"],        "Vmaj": ["F#4","A#4","C#5"],        "VI-": ["G#4","B4","D#5"],        "VIIo": ["A#3","C#4","E4"]    },    "Cb": {        "Imaj": ["Cb3","Eb4","Gb4"],        "II-": ["Db4","Fb4","Ab4"],        "III-": ["Eb4","Gb4","Bb4"],        "IVmaj": ["Fb4","Ab4","Cb4"],        "Vmaj": ["Gb4","Bb4","Db5"],        "VI-": ["Ab4","Cb4","Eb5"],        "VIIo": ["Bb3","Db4","Fb4"]    },    "F#": {        "Imaj": ["F#4","A#4","C#5"],        "II-": ["G#4","B4","D#5"],        "III-": ["A#3","C#4","E#4"],        "IVmaj": ["B3","D#4","F#4"],        "Vmaj": ["C#4","E#4","G#4"],        "VI-": ["D#4","F#4","A#4"],        "VIIo": ["E#4","G#4","B4"]    },    "Gb": {        "Imaj": ["Gb4","Bb4","Db5"],        "II-": ["Ab4","Cb4","Eb5"],        "III-": ["Bb3","Db4","F4"],        "IVmaj": ["Cb","Eb4","Gb4"],        "Vmaj": ["Db4","F4","Ab4"],        "VI-": ["Eb4","Gb4","Bb4"],        "VIIo": ["F4","Ab4","Cb4"]    },    "C#": {        "Imaj": ["C#4","E#4","G#4"],        "II-": ["D#4","F#4","A#4"],        "III-": ["E#4","G#4","B#4"],        "IVmaj": ["F#4","A#4","C#5"],        "Vmaj": ["G#3","B#3","D#4"],        "VI-": ["A#3","C#4","E#4"],        "VIIo": ["B#3","D#4","F#4"]    },    "Db": {        "Imaj": ["Db4","F4","Ab4"],        "II-": ["Eb4","Gb4","Bb4"],        "III-": ["F4","Ab4","C4"],        "IVmaj": ["Gb4","Bb4","Db5"],        "Vmaj": ["Ab3","C3","Eb4"],        "VI-": ["Bb3","Db4","F4"],        "VIIo": ["C3","Eb4","Gb4"]    },    "Ab": {        "Imaj": ["Ab3","C4","Eb4"],        "II-": ["Bb3","Db4","F4"],        "III-": ["C4","Eb4","G4"],        "IVmaj": ["Db4","F4","Ab4"],        "Vmaj": ["Eb4","G4","Bb4"],        "VI-": ["F4","Ab4","C5"],        "VIIo": ["G4","Bb4","Db5"]    },    "Eb": {        "Imaj": ["Eb4","G4","Bb4"],        "II-": ["F4","Ab4","C5"],        "III-": ["G3","Bb3","D4"],        "IVmaj": ["Ab3","C4","Eb4"],        "Vmaj": ["Bb3","D4","F4"],        "VI-": ["C4","Eb4","G4"],        "VIIo": ["D4","F4","Ab4"]    },    "Bb": {        "Imaj": ["Bb3","D4","F4"],        "II-": ["C4","Eb4","G4"],        "III-": ["D4","F4","A4"],        "IVmaj": ["Eb4","G4","Bb4"],        "Vmaj": ["F4","A4","C5"],        "VI-": ["G4","Bb4","D5"],        "VIIo": ["A3","C4","Eb4"]    },    "F": {        "Imaj": ["F4","A4","C5"],        "II-": ["G4","Bb4","D5"],        "III-": ["A3","C4","E4"],        "IVmaj": ["Bb3","D4","F4"],        "Vmaj": ["C4","E4","G4"],        "VI-": ["D4","F4","A4"],        "VIIo": ["E4","G4","Bb4"]    }    }}');
 
   const mySound = new sound("obi-wan-hello-there.mp3");
   //create a synth and connect it to the main output (your speakers)
-  const synth = new Tone.Synth().toDestination();
+  const synth = new Tone.PolySynth().toDestination();
+  const piano = new Tone.Sampler({
+    urls: {
+      "C4": "C4.mp3",
+      "D#4": "Ds4.mp3",
+      "F#4": "Fs4.mp3",
+      "A4": "A4.mp3",
+    },
+    release: 1,
+    baseUrl: "https://tonejs.github.io/audio/salamander/",
+  }).toDestination();
+
+  const guitar = new Tone.Sampler({
+    urls: {
+      "C4": "C3.mp3",
+      "D#4": "Ds3.mp3",
+      "F#3": "Fs2.mp3",
+      "A4": "A3.mp3",
+    },
+    release: 1,
+    baseUrl: "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/master/samples/guitar-acoustic/",
+  }).toDestination();
 
   const stuff = document.getElementById('stuff');
   stuff.style.maxWidth = (screen.width-250)/4;
