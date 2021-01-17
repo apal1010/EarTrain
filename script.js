@@ -24,11 +24,14 @@
   
   function toggleMenuDisplay(e){
     const dropdown = e.currentTarget.parentNode;
-    const menu = dropdown.querySelectorAll('.menu');
-    const icon = dropdown.querySelectorAll('.fa-angle-right');
+    const menu = dropdown.querySelector('.menu');
+    const icon = dropdown.querySelector('.fa-angle-right');
   
-    menu.forEach(men=>toggleClass(men,'hide'));
-    icon.forEach(arrow=>toggleClass(arrow,'rotate-90'));
+    //menu.style.transition = "max-height "+(10.0/(0.5*menu.childNodes.length)).toString()+"s ease-in-out";
+    menu.style.maxHeight = (0.54*menu.childNodes.length).toString()+"em";
+    //menu.style.maxHeight = (1*menu.childNodes.length).toString()+"em";
+    toggleClass(menu,'hide');
+    toggleClass(icon,'rotate-90');
   }
 
   function swapselect(e){
@@ -69,6 +72,10 @@
         sbatch=false;
       }
     }
+  }
+
+  function setTransitionTime(e){
+
   }
 
   function setselect(e,val){
@@ -169,8 +176,6 @@
       e.target.parentNode.parentNode.querySelector('.dropdown .title').dispatchEvent(new Event('change'));
     }else{
       //mySound.play();
-      //synth.triggerAttackRelease("A4","2n");
-      //console.log(chordData["Triads"]["C"]["Imaj"]);
       var chord = generateRandChord();
       //chord = applyInversion(chord);
       playedChord+=", notes are: " + chord;
@@ -191,11 +196,6 @@
     }
   }
 
-  //----------------------------
-  //-------MUSIC CODE-----------
-
-  //notes:
-  //Define C4 as 0th note
 
   function octaveShift(stuff){
     //for later
@@ -360,6 +360,8 @@
     release: 1,
     baseUrl: "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/master/samples/guitar-acoustic/",
   }).toDestination();
+
+  Tone.Transport.bpm.value = 120;
 
   const stuff = document.getElementById('stuff');
   //stuff.style.maxWidth = (screen.width-250)/4;
