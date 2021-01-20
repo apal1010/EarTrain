@@ -111,9 +111,11 @@ body{
 	transition: opacity 0.25s ease-in-out;
 }
 
-.alphacontainer:hover{
-	transition: opacity 0.25s ease-in-out;
-	opacity: 50%;
+@media (hover: hover) { 
+	.alphacontainer:hover{
+		transition: opacity 0.25s ease-in-out;
+		opacity: 50%;
+	}
 }
 
 .pointerCursor:hover{
