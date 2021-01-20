@@ -152,7 +152,7 @@
     const result = document.getElementById('result');
   
     if(played){
-      result.innerHTML = 'This chord is: ' + playedChord;
+      result.innerHTML = 'The last chord played was: ' + playedChord;
     }
   }
 
@@ -171,16 +171,49 @@
     }
   }
 
+  function stopAutoPlayer(e){
+    e = document.getElementById('button');
+    autoPlaying = false;
+    window.clearTimeout(autoPlayId);
+    document.getElementById('button').innerHTML = "Start Playing Chords";
+    autoPlayerReady = true;
+    e.removeEventListener('click', stopAutoPlayer);
+    e.addEventListener('click', playnoise);
+    document.body.onkeyup = function(e){
+      if(e.code === "Space"){
+          playnoise(e);
+      }
+    }
+
+  }
+
   function playnoise(e){
+    e = document.getElementById('button');
+    if(autoPlayerReady){
+      autoPlaying = true;
+      autoPlayerReady = false;
+      e.innerHTML = "Pause";
+      e.removeEventListener('click', playnoise);
+      e.addEventListener('click', stopAutoPlayer);
+      document.body.onkeyup = function(e){
+        if(e.code === "Space"){
+            stopAutoPlayer(e);
+        }
+      }
+    
+    }
+    if(autoPlaying){
+      autoPlayId = window.setTimeout(playnoise,delay/2);
+    }
     if(played){
-      e.target.parentNode.parentNode.querySelector('.dropdown .title').dispatchEvent(new Event('change'));
+      document.querySelector('.dropdown .title').dispatchEvent(new Event('change'));
     }else{
       //mySound.play();
       var chord = generateRandChord();
       //chord = applyInversion(chord);
       playedChord+=", notes are: " + chord;
       playChord(chord);
-      console.log(chord);
+
       
     }
     document.getElementById('button').dispatchEvent(new Event('reveal'));
@@ -189,10 +222,15 @@
   }
 
   function handleButton(e){
-    if(e.target.innerHTML.indexOf('Play')!==-1){
-      e.target.innerHTML = 'reveal';
+    if(!autoPlaying){
+      if(e.target.innerHTML.indexOf('Play')!==-1){
+        e.target.innerHTML = 'Reveal Chord';
+      }else{
+        e.target.innerHTML = 'Play Chord';
+      }
     }else{
-      e.target.innerHTML = 'Play ';
+      document.querySelector('.dropdown .title').dispatchEvent(new Event('change'));
+      e.target.innerHTML = 'Pause';
     }
   }
 
@@ -277,7 +315,6 @@
   function playChord(chord){
     var instrument = document.getElementById("instrument").textContent.substring(12);
     instrument = instrument.substring(0,instrument.length-2);
-    console.log(instrument);
     switch (instrument) {
       case "Piano":
         piano.triggerAttackRelease(chord,"2n");
@@ -297,6 +334,31 @@
     }
   }
 
+
+  function setDelay(e){
+    var num = e.target.value;
+    if(num===""){
+      num = 0;
+    }else{
+      num = parseFloat(num);
+      if(num<0){
+        num=0;
+        e.target.value = 0;
+      }
+    }
+    num = Math.floor(num*1000);
+    autoPlayerReady = num!==0;
+    if(autoPlayerReady){
+      document.getElementById('button').innerHTML = "Start Playing Chords";
+    }else{
+      stopAutoPlayer(e);
+      autoPlayerReady = false;
+      played = false;
+      document.getElementById('button').innerHTML = "Play Chord";
+    }
+    delay = num;
+  }
+
   //-------Globals--------------
 
   const keys = ['C','G','D','A','E','B','Cb','F#','Gb','C#','Db','Ab','Eb','Bb','F'];
@@ -305,6 +367,7 @@
 
   //get elements
   const button = document.querySelector('.button');
+  const delaytimer = document.getElementById('delaytimer');
   const dropdownTitle = document.querySelectorAll('.dropdown .title');
   const dropdownOptions = document.querySelectorAll('.dropdown .option');
   const dropdownSelected = document.querySelectorAll('.dropdown .selected');
@@ -315,7 +378,13 @@
   //bind listeners to these elements
   button.addEventListener('click', playnoise);
   button.addEventListener('reveal', handleButton);
-  document.addEventListener('keydown', (e)=>{if(e.code==="Space") playnoise(e)});
+  document.body.onkeyup = function(e){
+    if(e.code === "Space"){
+        playnoise(e);
+    }
+  }
+
+  delaytimer.addEventListener('input', setDelay);
 
   dropdownTitle.forEach(dropdown => dropdown.addEventListener('click', toggleMenuDisplay));
   
@@ -332,9 +401,12 @@
 
   var playedChord = '';
 
-  var d = new Date();
+  var delay = 0;
+  var autoPlayerReady = false;
+  var autoPlaying = false;
+  var autoPlayId = 69;
 
-  const chordData = JSON.parse('{"Triads": {"C": {"Imaj": ["C4","E4","G4"],"II-": ["D4","F4","A4"],"III-": ["E4","G4","B4"],"IVmaj": ["F4","A4","C5"],"Vmaj": ["G3","B3","D4"],"VI-": ["A3","C4","E4"],"VIIo": ["B3","D4","F4"]},"G": {"Imaj": ["G3","B3","D4"],"II-": ["A3","C4","E4"],"III-": ["B3","D4","F#4"],"IVmaj": ["C4","E4","G4"],"Vmaj": ["D4","F#4","A4"],"VI-": ["E4","G4","B4"],"VIIo": ["F#4","A4","C5"]},"D": {"Imaj": ["D4","F#4","A4"],"II-": ["E4","G4","B4"],"III-": ["F#4","A4","C#5"],"IVmaj": ["G4","B4","D5"],"Vmaj": ["A3","C#4","E4"],"VI-": ["B3","D4","F#4"],"VIIo": ["C#4","E4","G4"]},"A": {"Imaj": ["A3","C#4","E4"],"II-": ["B3","D4","F#4"],"III-": ["C#4","E4","G#4"],"IVmaj": ["D4","F#4","A4"],"Vmaj": ["E4","G#4","B4"],"VI-": ["F#4","A4","C#5"],"VIIo": ["G#4","B4","D5"]},"E": {"Imaj": ["E4","G#4","B4"],"II-": ["F#4","A4","C#5"],"III-": ["G#3","B3","D#4"],"IVmaj": ["A3","C#4","E4"],"Vmaj": ["B3","D#4","F#4"],"VI-": ["C#4","E4","G#4"],"VIIo": ["D#4","F#4","A4"]},"B": {"Imaj": ["B3","D#4","F#4"],"II-": ["C#4","E4","G#4"],"III-": ["D#4","F#4","A#4"],"IVmaj": ["E4","G#4","B4"],"Vmaj": ["F#4","A#4","C#5"],"VI-": ["G#4","B4","D#5"],"VIIo": ["A#3","C#4","E4"]},"Cb": {"Imaj": ["Cb3","Eb4","Gb4"],"II-": ["Db4","Fb4","Ab4"],"III-": ["Eb4","Gb4","Bb4"],"IVmaj": ["Fb4","Ab4","Cb4"],"Vmaj": ["Gb4","Bb4","Db5"],"VI-": ["Ab4","Cb4","Eb5"],"VIIo": ["Bb3","Db4","Fb4"]},"F#": {"Imaj": ["F#4","A#4","C#5"],"II-": ["G#4","B4","D#5"],"III-": ["A#3","C#4","E#4"],"IVmaj": ["B3","D#4","F#4"],"Vmaj": ["C#4","E#4","G#4"],"VI-": ["D#4","F#4","A#4"],"VIIo": ["E#4","G#4","B4"]},"Gb": {"Imaj": ["Gb4","Bb4","Db5"],"II-": ["Ab4","Cb4","Eb5"],"III-": ["Bb3","Db4","F4"],"IVmaj": ["Cb","Eb4","Gb4"],"Vmaj": ["Db4","F4","Ab4"],"VI-": ["Eb4","Gb4","Bb4"],"VIIo": ["F4","Ab4","Cb4"]},"C#": {"Imaj": ["C#4","E#4","G#4"],"II-": ["D#4","F#4","A#4"],"III-": ["E#4","G#4","B#4"],"IVmaj": ["F#4","A#4","C#5"],"Vmaj": ["G#3","B#3","D#4"],"VI-": ["A#3","C#4","E#4"],"VIIo": ["B#3","D#4","F#4"]},"Db": {"Imaj": ["Db4","F4","Ab4"],"II-": ["Eb4","Gb4","Bb4"],"III-": ["F4","Ab4","C4"],"IVmaj": ["Gb4","Bb4","Db5"],"Vmaj": ["Ab3","C3","Eb4"],"VI-": ["Bb3","Db4","F4"],"VIIo": ["C3","Eb4","Gb4"]},"Ab": {"Imaj": ["Ab3","C4","Eb4"],"II-": ["Bb3","Db4","F4"],"III-": ["C4","Eb4","G4"],"IVmaj": ["Db4","F4","Ab4"],"Vmaj": ["Eb4","G4","Bb4"],"VI-": ["F4","Ab4","C5"],"VIIo": ["G4","Bb4","Db5"]},"Eb": {"Imaj": ["Eb4","G4","Bb4"],"II-": ["F4","Ab4","C5"],"III-": ["G3","Bb3","D4"],"IVmaj": ["Ab3","C4","Eb4"],"Vmaj": ["Bb3","D4","F4"],"VI-": ["C4","Eb4","G4"],"VIIo": ["D4","F4","Ab4"]},"Bb": {"Imaj": ["Bb3","D4","F4"],"II-": ["C4","Eb4","G4"],"III-": ["D4","F4","A4"],"IVmaj": ["Eb4","G4","Bb4"],"Vmaj": ["F4","A4","C5"],"VI-": ["G4","Bb4","D5"],"VIIo": ["A3","C4","Eb4"]},"F": {"Imaj": ["F4","A4","C5"],"II-": ["G4","Bb4","D5"],"III-": ["A3","C4","E4"],"IVmaj": ["Bb3","D4","F4"],"Vmaj": ["C4","E4","G4"],"VI-": ["D4","F4","A4"],"VIIo": ["E4","G4","Bb4"]}}}');
+  const chordData = JSON.parse('{"Triads": {"C": {"Imaj": ["C4","E4","G4"],"II-": ["D4","F4","A4"],"III-": ["E4","G4","B4"],"IVmaj": ["F4","A4","C5"],"Vmaj": ["G3","B3","D4"],"VI-": ["A3","C4","E4"],"VIIo": ["B3","D4","F4"]},"G": {"Imaj": ["G3","B3","D4"],"II-": ["A3","C4","E4"],"III-": ["B3","D4","F#4"],"IVmaj": ["C4","E4","G4"],"Vmaj": ["D4","F#4","A4"],"VI-": ["E4","G4","B4"],"VIIo": ["F#4","A4","C5"]},"D": {"Imaj": ["D4","F#4","A4"],"II-": ["E4","G4","B4"],"III-": ["F#4","A4","C#5"],"IVmaj": ["G4","B4","D5"],"Vmaj": ["A3","C#4","E4"],"VI-": ["B3","D4","F#4"],"VIIo": ["C#4","E4","G4"]},"A": {"Imaj": ["A3","C#4","E4"],"II-": ["B3","D4","F#4"],"III-": ["C#4","E4","G#4"],"IVmaj": ["D4","F#4","A4"],"Vmaj": ["E4","G#4","B4"],"VI-": ["F#4","A4","C#5"],"VIIo": ["G#4","B4","D5"]},"E": {"Imaj": ["E4","G#4","B4"],"II-": ["F#4","A4","C#5"],"III-": ["G#3","B3","D#4"],"IVmaj": ["A3","C#4","E4"],"Vmaj": ["B3","D#4","F#4"],"VI-": ["C#4","E4","G#4"],"VIIo": ["D#4","F#4","A4"]},"B": {"Imaj": ["B3","D#4","F#4"],"II-": ["C#4","E4","G#4"],"III-": ["D#4","F#4","A#4"],"IVmaj": ["E4","G#4","B4"],"Vmaj": ["F#4","A#4","C#5"],"VI-": ["G#4","B4","D#5"],"VIIo": ["A#3","C#4","E4"]},"Cb": {"Imaj": ["Cb3","Eb4","Gb4"],"II-": ["Db4","Fb4","Ab4"],"III-": ["Eb4","Gb4","Bb4"],"IVmaj": ["Fb4","Ab4","Cb4"],"Vmaj": ["Gb4","Bb4","Db5"],"VI-": ["Ab4","Cb4","Eb5"],"VIIo": ["Bb3","Db4","Fb4"]},"F#": {"Imaj": ["F#4","A#4","C#5"],"II-": ["G#4","B4","D#5"],"III-": ["A#3","C#4","E#4"],"IVmaj": ["B3","D#4","F#4"],"Vmaj": ["C#4","E#4","G#4"],"VI-": ["D#4","F#4","A#4"],"VIIo": ["E#4","G#4","B4"]},"Gb": {"Imaj": ["Gb4","Bb4","Db5"],"II-": ["Ab4","Cb4","Eb5"],"III-": ["Bb3","Db4","F4"],"IVmaj": ["Cb4","Eb4","Gb4"],"Vmaj": ["Db4","F4","Ab4"],"VI-": ["Eb4","Gb4","Bb4"],"VIIo": ["F4","Ab4","Cb4"]},"C#": {"Imaj": ["C#4","E#4","G#4"],"II-": ["D#4","F#4","A#4"],"III-": ["E#4","G#4","B#4"],"IVmaj": ["F#4","A#4","C#5"],"Vmaj": ["G#3","B#3","D#4"],"VI-": ["A#3","C#4","E#4"],"VIIo": ["B#3","D#4","F#4"]},"Db": {"Imaj": ["Db4","F4","Ab4"],"II-": ["Eb4","Gb4","Bb4"],"III-": ["F4","Ab4","C4"],"IVmaj": ["Gb4","Bb4","Db5"],"Vmaj": ["Ab3","C3","Eb4"],"VI-": ["Bb3","Db4","F4"],"VIIo": ["C3","Eb4","Gb4"]},"Ab": {"Imaj": ["Ab3","C4","Eb4"],"II-": ["Bb3","Db4","F4"],"III-": ["C4","Eb4","G4"],"IVmaj": ["Db4","F4","Ab4"],"Vmaj": ["Eb4","G4","Bb4"],"VI-": ["F4","Ab4","C5"],"VIIo": ["G4","Bb4","Db5"]},"Eb": {"Imaj": ["Eb4","G4","Bb4"],"II-": ["F4","Ab4","C5"],"III-": ["G3","Bb3","D4"],"IVmaj": ["Ab3","C4","Eb4"],"Vmaj": ["Bb3","D4","F4"],"VI-": ["C4","Eb4","G4"],"VIIo": ["D4","F4","Ab4"]},"Bb": {"Imaj": ["Bb3","D4","F4"],"II-": ["C4","Eb4","G4"],"III-": ["D4","F4","A4"],"IVmaj": ["Eb4","G4","Bb4"],"Vmaj": ["F4","A4","C5"],"VI-": ["G4","Bb4","D5"],"VIIo": ["A3","C4","Eb4"]},"F": {"Imaj": ["F4","A4","C5"],"II-": ["G4","Bb4","D5"],"III-": ["A3","C4","E4"],"IVmaj": ["Bb3","D4","F4"],"Vmaj": ["C4","E4","G4"],"VI-": ["D4","F4","A4"],"VIIo": ["E4","G4","Bb4"]}}}');
 
   const mySound = new sound("obi-wan-hello-there.mp3");
   //create a synth and connect it to the main output (your speakers)

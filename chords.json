@@ -76,7 +76,7 @@
         "Imaj": ["Gb4","Bb4","Db5"],
         "II-": ["Ab4","Cb4","Eb5"],
         "III-": ["Bb3","Db4","F4"],
-        "IVmaj": ["Cb","Eb4","Gb4"],
+        "IVmaj": ["Cb4","Eb4","Gb4"],
         "Vmaj": ["Db4","F4","Ab4"],
         "VI-": ["Eb4","Gb4","Bb4"],
         "VIIo": ["F4","Ab4","Cb4"]
