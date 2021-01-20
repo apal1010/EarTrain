@@ -111,7 +111,7 @@ body{
 	transition: opacity 0.25s ease-in-out;
 }
 
-@media (hover: hover) { 
+@media (hover: hover), (pointer:fine){ 
 	.alphacontainer:hover{
 		transition: opacity 0.25s ease-in-out;
 		opacity: 50%;
