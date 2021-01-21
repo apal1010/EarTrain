@@ -59,7 +59,7 @@
       </div>
 
       <div class='dropdown'>
-        <div class='title pointerCursor' id = 'order'>Select chords from order?? <b class="fa fa-angle-right">></b></div>
+        <div class='title pointerCursor' id = 'order'>Select possible chords <b class="fa fa-angle-right">></b></div>
         
         <div class='menu pointerCursor hide'>
           <div class='batchselect' id='t'>Triads</div>
@@ -83,13 +83,21 @@
     
       </div>
 
-      <p span class = 'clear' id='result' style="text-align: center; font-size: small;">The last chord played was: </p span>
+      <p></p>
       <div class="input-container">
         <input type="number" required="" autocomplete="off" id='delaytimer'/>
         <label>Delay Duration (seconds):</label>		
       </div>
+      <div class="input-container">
+        <input type="number" required="" autocomplete="off" id='octaveshift'/>
+        <label>Octave shift:</label>		
+      </div>
       <p></p>
+      <p span class = 'clear' id='result' style="text-align: center; font-size: small;">Play a chord! </p span>
       <div class='button pointerCursor alphacontainer' id = 'button'>Play Chord</div>
+      <div class='button pointerCursor alphacontainer' id = 'replay'>Replay last Chord</div>
+      <p></p>
+      
       
       <script src="script.js"></script>
     

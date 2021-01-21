@@ -5,18 +5,17 @@ body{
 }
 
 .hide {
-    max-height: 0.25em !important;
+	max-height: 0.25em !important;
 }
 
 .dropdown{
 	background: linear-gradient(to right, #8e3b46, #64171a);
-	/*float: left;*/
 	font-size: 16px;
 	width: 250px;
 	margin: 1em;
 	display: inline-block;
 	border-radius: 0.5rem;
-
+	user-select: none;
 }
 
 .dropdown .title{
@@ -32,8 +31,9 @@ body{
 
 .dropdown .menu{
 	transition: max-height 0.5s ease-in-out;
-	max-height: 10em;
+	position: relative;
 	overflow: hidden;
+	z-index: 10;
 }
 
 .dropdown .menu .option{
@@ -102,16 +102,21 @@ body{
 	vertical-align: middle;
 	display: inline-block;
 	line-height: 3em;
+	user-select: none;
+	position: relative;
 }
 
 .button:hover{
 	background: linear-gradient(to left, rgba(43,25,61,1),#654880FF);
 }
+
+
 .alphacontainer{
+	user-select: none;
 	transition: opacity 0.25s ease-in-out;
 }
 
-@media (hover: hover), (pointer:fine){ 
+@media not all and (hover: none){ 
 	.alphacontainer:hover{
 		transition: opacity 0.25s ease-in-out;
 		opacity: 50%;
@@ -136,7 +141,8 @@ p.clear{
 	padding: 0.1em;
 	display: inline-block;
 	position:relative;
-	margin:0.5em;
+	margin:0.2em;
+	margin-bottom: 0.2em;
 	width: 250px;
 }
 .input-container label{

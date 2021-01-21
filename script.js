@@ -28,7 +28,7 @@
     const icon = dropdown.querySelector('.fa-angle-right');
   
     //menu.style.transition = "max-height "+(10.0/(0.5*menu.childNodes.length)).toString()+"s ease-in-out";
-    menu.style.maxHeight = (0.54*menu.childNodes.length).toString()+"em";
+    menu.style.maxHeight = (0.6*menu.childNodes.length).toString()+"em";
     //menu.style.maxHeight = (1*menu.childNodes.length).toString()+"em";
     toggleClass(menu,'hide');
     toggleClass(icon,'rotate-90');
@@ -122,6 +122,7 @@
     switch (titleElem.id) {
       case 'key':
         premsg = "Key: "
+        playKeyProgression(newValue);
         break;
       
       case 'instrument':
@@ -152,7 +153,21 @@
     const result = document.getElementById('result');
   
     if(played){
-      result.innerHTML = 'The last chord played was: ' + playedChord;
+      result.textContent = 'That chord was: ' + playedChord;
+    }
+  }
+
+  function playKeyProgression(key){
+    key = key.substring(0,key.length-1);
+    if(key==='Any Key'){
+      return;
+    }else{
+      firstChord = (chordData["Triads"][key]["Imaj"]).slice();
+      secondChord = (chordData["Triads"][key]["IVmaj"]).slice();
+      thirdChord = (chordData["Triads"][key]["Vmaj"]).slice();
+      playChord(firstChord);
+      window.setTimeout(playChord,500,secondChord);
+      window.setTimeout(playChord,1000,thirdChord);
     }
   }
 
@@ -175,13 +190,15 @@
     e = document.getElementById('button');
     autoPlaying = false;
     window.clearTimeout(autoPlayId);
-    document.getElementById('button').innerHTML = "Start Playing Chords";
+    document.getElementById('button').textContent = "Start Playing Chords";
     autoPlayerReady = true;
     e.removeEventListener('click', stopAutoPlayer);
     e.addEventListener('click', playnoise);
-    document.body.onkeyup = function(e){
+    document.body.onkeydown = function(e){
       if(e.code === "Space"){
           playnoise(e);
+      }else if(e.code === "KeyR"){
+        replayChord(e);
       }
     }
 
@@ -192,12 +209,14 @@
     if(autoPlayerReady){
       autoPlaying = true;
       autoPlayerReady = false;
-      e.innerHTML = "Pause";
+      e.textContent = "Pause";
       e.removeEventListener('click', playnoise);
       e.addEventListener('click', stopAutoPlayer);
-      document.body.onkeyup = function(e){
+      document.body.onkeydown = function(e){
         if(e.code === "Space"){
             stopAutoPlayer(e);
+        }else if(e.code === "KeyR"){
+          replayChord(e);
         }
       }
     
@@ -211,7 +230,9 @@
       //mySound.play();
       var chord = generateRandChord();
       //chord = applyInversion(chord);
-      playedChord+=", notes are: " + chord;
+      chord = octaveShift(chord);
+      chordNotes = chord;
+      console.log(chord);
       playChord(chord);
 
       
@@ -223,20 +244,34 @@
 
   function handleButton(e){
     if(!autoPlaying){
-      if(e.target.innerHTML.indexOf('Play')!==-1){
-        e.target.innerHTML = 'Reveal Chord';
+      if(e.target.textContent.indexOf('Play')!==-1){
+        e.target.textContent = 'Reveal Chord';
       }else{
-        e.target.innerHTML = 'Play Chord';
+        e.target.textContent = 'Play Chord';
       }
     }else{
       document.querySelector('.dropdown .title').dispatchEvent(new Event('change'));
-      e.target.innerHTML = 'Pause';
+      e.target.textContent = 'Pause';
     }
   }
 
 
-  function octaveShift(stuff){
-    //for later
+  function octaveShift(chord){
+    for(let i = 0; i<chord.length;i++){
+      chord[i] = chord[i].replace(/\s+/g, '');
+      chord[i] = chord[i].substring(0,chord[i].length-1)+((parseInt(chord[i].substring(chord[i].length-1))+octshift)).toString();
+    }
+    return chord;
+  }
+
+  function setOctaveShift(e){
+    var shift = e.target.value;
+    if(shift === ''){
+      shift = 0;
+    }else{
+      shift = parseInt(shift);
+    }
+    octshift = shift;
   }
 
   function applyInversion(chord){
@@ -273,10 +308,29 @@
 
   function generateRandChord(){
     var keytitle = document.getElementById('key').textContent;
+    var chordToPlay = [];
     
     var chosenkey = keytitle.substring(5);
     if(chosenkey==='Any Key >'||chosenkey==='t a key>'){
-      chosenkey = keys[Math.floor(Math.random()*15)];
+      var rootIndex = Math.floor(Math.random()*12);
+      var noteIndex = rootIndex;
+      var root = allnotes[rootIndex];
+      var chordIndex = Math.floor(Math.random()*10);
+      var rootOctave = rootIndex<8?4:3;
+      chordToPlay.push(root+rootOctave.toString());
+      var intervals = chordIntervals[chordIndex];
+      var octave = rootOctave;
+      for(let i = 0; i<intervals.length;i++){
+        noteIndex = rootIndex+intervals[i];
+        if(noteIndex>11){
+          octave = rootOctave+1;
+          noteIndex = noteIndex%12;
+        }
+        chordToPlay.push(allnotes[noteIndex]+octave.toString());
+      }
+
+      playedChord = root+" "+tenchords[chordIndex];
+      return chordToPlay;
     }else{
       chosenkey = chosenkey.substring(0,chosenkey.length-2);
     }
@@ -296,20 +350,36 @@
 
     if(allowedChords.length==0){
       playedChord= "No chords selected!";
-      return [];
+      return chordToPlay;
     }
 
     var selectedChord = triads[allowedChords[Math.floor(Math.random()*allowedChords.length)]];
+    chordToPlay = (chordData["Triads"][chosenkey][selectedChord]).slice()
 
-    playedChord = chosenkey + " " + selectedChord;
+    playedChord = selectedChord + " (";
+    playedChord += chordToPlay[0].substring(0,chordToPlay[0].length-1) + " ";
+    if(selectedChord.indexOf("maj")!==-1){
+      playedChord += "major";
+    }else if(selectedChord.indexOf("-")!==-1){
+      playedChord += "minor";
+    }else{
+      playedChord += "diminished";
+    }
+    playedChord += ")";
+
     
     //console.log(chosenkey);
     //console.log(selectedChord);
 
-    return (chordData["Triads"][chosenkey][selectedChord]).slice();
+    return chordToPlay;
     
 
     
+  }
+
+  function replayChord(e){
+    playChord(chordNotes);
+    //document.querySelector('.dropdown .title').dispatchEvent(new Event('change'));
   }
 
   function playChord(chord){
@@ -325,11 +395,11 @@
         break;
 
       case "Synth":
-        synth.triggerAttackRelease(chord,"2n");
+        synth.triggerAttackRelease(chord,"4n");
         break;
 
       default:
-        synth.triggerAttackRelease(chord,"2n");
+        piano.triggerAttackRelease(chord,"2n");
         break;
     }
   }
@@ -349,12 +419,12 @@
     num = Math.floor(num*1000);
     autoPlayerReady = num!==0;
     if(autoPlayerReady){
-      document.getElementById('button').innerHTML = "Start Playing Chords";
+      document.getElementById('button').textContent = "Start Playing Chords";
     }else{
       stopAutoPlayer(e);
       autoPlayerReady = false;
       played = false;
-      document.getElementById('button').innerHTML = "Play Chord";
+      document.getElementById('button').textContent = "Play Chord";
     }
     delay = num;
   }
@@ -362,12 +432,18 @@
   //-------Globals--------------
 
   const keys = ['C','G','D','A','E','B','Cb','F#','Gb','C#','Db','Ab','Eb','Bb','F'];
+  const allnotes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
   const triads = ['Imaj','II-','III-','IVmaj','Vmaj','VI-','VIIo'];
+  const sevenths = [];
+  const tenchords = ['Major','Minor','Augmented','Diminished','Major 7th','Minor 7th','Dominant 7th','Half Diminished 7th','Diminished 7th','Dom 7 Sus 4'];
+  const chordIntervals = [[4,7],[3,7],[4,8],[3,6],[4,7,11],[3,7,10,],[4,7,10],[3,6,10],[3,6,9],[5,7,10]];
 
 
   //get elements
   const button = document.querySelector('.button');
+  const replayer = document.getElementById('replay');
   const delaytimer = document.getElementById('delaytimer');
+  const octaveshift = document.getElementById('octaveshift');
   const dropdownTitle = document.querySelectorAll('.dropdown .title');
   const dropdownOptions = document.querySelectorAll('.dropdown .option');
   const dropdownSelected = document.querySelectorAll('.dropdown .selected');
@@ -378,13 +454,20 @@
   //bind listeners to these elements
   button.addEventListener('click', playnoise);
   button.addEventListener('reveal', handleButton);
-  document.body.onkeyup = function(e){
+  document.body.onkeydown = function(e){
     if(e.code === "Space"){
         playnoise(e);
+    }else if(e.code === "KeyR"){
+      replayChord(e);
     }
   }
 
+  replayer.addEventListener('click', replayChord);
+
+
   delaytimer.addEventListener('input', setDelay);
+
+  octaveshift.addEventListener('input',setOctaveShift);
 
   dropdownTitle.forEach(dropdown => dropdown.addEventListener('click', toggleMenuDisplay));
   
@@ -399,12 +482,16 @@
   var sbatch = true;
   var played = false;
 
+
+  var chordNotes = [];
   var playedChord = '';
 
   var delay = 0;
   var autoPlayerReady = false;
   var autoPlaying = false;
   var autoPlayId = 69;
+
+  var octshift = 0;
 
   const chordData = JSON.parse('{"Triads": {"C": {"Imaj": ["C4","E4","G4"],"II-": ["D4","F4","A4"],"III-": ["E4","G4","B4"],"IVmaj": ["F4","A4","C5"],"Vmaj": ["G3","B3","D4"],"VI-": ["A3","C4","E4"],"VIIo": ["B3","D4","F4"]},"G": {"Imaj": ["G3","B3","D4"],"II-": ["A3","C4","E4"],"III-": ["B3","D4","F#4"],"IVmaj": ["C4","E4","G4"],"Vmaj": ["D4","F#4","A4"],"VI-": ["E4","G4","B4"],"VIIo": ["F#4","A4","C5"]},"D": {"Imaj": ["D4","F#4","A4"],"II-": ["E4","G4","B4"],"III-": ["F#4","A4","C#5"],"IVmaj": ["G4","B4","D5"],"Vmaj": ["A3","C#4","E4"],"VI-": ["B3","D4","F#4"],"VIIo": ["C#4","E4","G4"]},"A": {"Imaj": ["A3","C#4","E4"],"II-": ["B3","D4","F#4"],"III-": ["C#4","E4","G#4"],"IVmaj": ["D4","F#4","A4"],"Vmaj": ["E4","G#4","B4"],"VI-": ["F#4","A4","C#5"],"VIIo": ["G#4","B4","D5"]},"E": {"Imaj": ["E4","G#4","B4"],"II-": ["F#4","A4","C#5"],"III-": ["G#3","B3","D#4"],"IVmaj": ["A3","C#4","E4"],"Vmaj": ["B3","D#4","F#4"],"VI-": ["C#4","E4","G#4"],"VIIo": ["D#4","F#4","A4"]},"B": {"Imaj": ["B3","D#4","F#4"],"II-": ["C#4","E4","G#4"],"III-": ["D#4","F#4","A#4"],"IVmaj": ["E4","G#4","B4"],"Vmaj": ["F#4","A#4","C#5"],"VI-": ["G#4","B4","D#5"],"VIIo": ["A#3","C#4","E4"]},"Cb": {"Imaj": ["Cb3","Eb4","Gb4"],"II-": ["Db4","Fb4","Ab4"],"III-": ["Eb4","Gb4","Bb4"],"IVmaj": ["Fb4","Ab4","Cb4"],"Vmaj": ["Gb4","Bb4","Db5"],"VI-": ["Ab4","Cb4","Eb5"],"VIIo": ["Bb3","Db4","Fb4"]},"F#": {"Imaj": ["F#4","A#4","C#5"],"II-": ["G#4","B4","D#5"],"III-": ["A#3","C#4","E#4"],"IVmaj": ["B3","D#4","F#4"],"Vmaj": ["C#4","E#4","G#4"],"VI-": ["D#4","F#4","A#4"],"VIIo": ["E#4","G#4","B4"]},"Gb": {"Imaj": ["Gb4","Bb4","Db5"],"II-": ["Ab4","Cb4","Eb5"],"III-": ["Bb3","Db4","F4"],"IVmaj": ["Cb4","Eb4","Gb4"],"Vmaj": ["Db4","F4","Ab4"],"VI-": ["Eb4","Gb4","Bb4"],"VIIo": ["F4","Ab4","Cb4"]},"C#": {"Imaj": ["C#4","E#4","G#4"],"II-": ["D#4","F#4","A#4"],"III-": ["E#4","G#4","B#4"],"IVmaj": ["F#4","A#4","C#5"],"Vmaj": ["G#3","B#3","D#4"],"VI-": ["A#3","C#4","E#4"],"VIIo": ["B#3","D#4","F#4"]},"Db": {"Imaj": ["Db4","F4","Ab4"],"II-": ["Eb4","Gb4","Bb4"],"III-": ["F4","Ab4","C4"],"IVmaj": ["Gb4","Bb4","Db5"],"Vmaj": ["Ab3","C3","Eb4"],"VI-": ["Bb3","Db4","F4"],"VIIo": ["C3","Eb4","Gb4"]},"Ab": {"Imaj": ["Ab3","C4","Eb4"],"II-": ["Bb3","Db4","F4"],"III-": ["C4","Eb4","G4"],"IVmaj": ["Db4","F4","Ab4"],"Vmaj": ["Eb4","G4","Bb4"],"VI-": ["F4","Ab4","C5"],"VIIo": ["G4","Bb4","Db5"]},"Eb": {"Imaj": ["Eb4","G4","Bb4"],"II-": ["F4","Ab4","C5"],"III-": ["G3","Bb3","D4"],"IVmaj": ["Ab3","C4","Eb4"],"Vmaj": ["Bb3","D4","F4"],"VI-": ["C4","Eb4","G4"],"VIIo": ["D4","F4","Ab4"]},"Bb": {"Imaj": ["Bb3","D4","F4"],"II-": ["C4","Eb4","G4"],"III-": ["D4","F4","A4"],"IVmaj": ["Eb4","G4","Bb4"],"Vmaj": ["F4","A4","C5"],"VI-": ["G4","Bb4","D5"],"VIIo": ["A3","C4","Eb4"]},"F": {"Imaj": ["F4","A4","C5"],"II-": ["G4","Bb4","D5"],"III-": ["A3","C4","E4"],"IVmaj": ["Bb3","D4","F4"],"Vmaj": ["C4","E4","G4"],"VI-": ["D4","F4","A4"],"VIIo": ["E4","G4","Bb4"]}}}');
 
