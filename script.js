@@ -274,66 +274,34 @@
   }
 
   function applyInversion(chord){
-    if(playedChord.indexOf("7")!==-1){
-      //case for 7ths
-      var inversion = Math.floor(Math.random()*4);
-      switch (inversion) {
-        case 0:
-          return chord;
-          break;
-        
-        case 1:
-          chord[0] = chord[0].substring(0,chord[0].length-1)+(parseInt(chord[0].charAt(chord[0].length-1))+1);
-          if(Math.random()>0.5){
-            chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))+1);
-          }
-          playedChord += ", 1st inversion"
-          return chord;
-          break;
-
-        case 2:
-          chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))-1);
-          playedChord += ", 2nd inversion"
-          return chord;
-          break;
-
-        case 3:
-          chord[3] = chord[3].substring(0,chord[3].length-1)+(parseInt(chord[3].charAt(chord[3].length-1))-1);
-          playedChord += ", 3rd inversion"
-          return chord;
-          break;
-
-        default:
-          return chord;
-          break;
-      }
-    }else{
-      //triads
-      var inversion = Math.floor(Math.random()*3);
-      switch (inversion) {
-        case 0:
-          return chord;
-          break;
-        
-        case 1:
-          chord[0] = chord[0].substring(0,chord[0].length-1)+(parseInt(chord[0].charAt(chord[0].length-1))+1);
-          if(Math.random()>0.5){
-            chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))+1);
-          }
-          playedChord += ", 1st inversion"
-          return chord;
-          break;
-
-        case 2:
-          chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))-1);
-          playedChord += ", 2nd inversion"
-          return chord;
-          break;
-
-        default:
-          return chord;
-          break;
-      }
+    
+    var inversion = (playedChord.indexOf("7")!==-1)?Math.floor(Math.random()*4):Math.floor(Math.random()*3); //allows 3rd inversions on 7th chords
+    switch (inversion) {
+      case 0:
+        return chord;
+        break;
+      
+      case 1:
+        chord[0] = chord[0].substring(0,chord[0].length-1)+(parseInt(chord[0].charAt(chord[0].length-1))+1);
+        if(Math.random()>0.5){
+          chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))+1);
+        }
+        playedChord += ", 1st inversion"
+        return chord;
+        break;
+      case 2:
+        chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))-1);
+        playedChord += ", 2nd inversion"
+        return chord;
+        break;
+      case 3:
+        chord[3] = chord[3].substring(0,chord[3].length-1)+(parseInt(chord[3].charAt(chord[3].length-1))-1);
+        playedChord += ", 3rd inversion"
+        return chord;
+        break;
+      default:
+        return chord;
+        break;
     }
   }
 

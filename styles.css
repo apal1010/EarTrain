@@ -115,16 +115,6 @@ body {
     transition: opacity 0.25s ease-in-out;
 }
 
-.alphacontainer:hover {
-    transition: opacity 0.25s ease-in-out;
-    opacity: 50%;
-}
-
-.alphacontainer:focus {
-    transition: opacity 0.25s ease-in-out;
-    opacity: 100%;
-}
-
 .pointerCursor:hover {
     cursor: pointer;
 }
