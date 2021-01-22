@@ -229,7 +229,7 @@
     }else{
       //mySound.play();
       var chord = generateRandChord();
-      //chord = applyInversion(chord);
+      chord = doInversions?applyInversion(chord):chord;
       chord = octaveShift(chord);
       chordNotes = chord;
       console.log(chord);
@@ -265,18 +265,48 @@
   }
 
   function setOctaveShift(e){
-    var shift = e.target.value;
-    if(shift === ''){
-      shift = 0;
-    }else{
-      shift = parseInt(shift);
-    }
-    octshift = shift;
+    var shift = e.target.checked;
+    octshift = shift?-1:0;
+  }
+
+  function setInversions(e){
+    doInversions = e.target.checked;
   }
 
   function applyInversion(chord){
     if(playedChord.indexOf("7")!==-1){
       //case for 7ths
+      var inversion = Math.floor(Math.random()*4);
+      switch (inversion) {
+        case 0:
+          return chord;
+          break;
+        
+        case 1:
+          chord[0] = chord[0].substring(0,chord[0].length-1)+(parseInt(chord[0].charAt(chord[0].length-1))+1);
+          if(Math.random()>0.5){
+            chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))+1);
+          }
+          playedChord += ", 1st inversion"
+          return chord;
+          break;
+
+        case 2:
+          chord[2] = chord[2].substring(0,chord[2].length-1)+(parseInt(chord[2].charAt(chord[2].length-1))-1);
+          playedChord += ", 2nd inversion"
+          return chord;
+          break;
+
+        case 3:
+          chord[3] = chord[3].substring(0,chord[3].length-1)+(parseInt(chord[3].charAt(chord[3].length-1))-1);
+          playedChord += ", 3rd inversion"
+          return chord;
+          break;
+
+        default:
+          return chord;
+          break;
+      }
     }else{
       //triads
       var inversion = Math.floor(Math.random()*3);
@@ -301,6 +331,7 @@
           break;
 
         default:
+          return chord;
           break;
       }
     }
@@ -442,8 +473,9 @@
   //get elements
   const button = document.querySelector('.button');
   const replayer = document.getElementById('replay');
+  const inversion = document.getElementById('inversion');
   const delaytimer = document.getElementById('delaytimer');
-  const octaveshift = document.getElementById('octaveshift');
+  const octaveshift = document.getElementById('shiftToBass');
   const dropdownTitle = document.querySelectorAll('.dropdown .title');
   const dropdownOptions = document.querySelectorAll('.dropdown .option');
   const dropdownSelected = document.querySelectorAll('.dropdown .selected');
@@ -464,8 +496,9 @@
 
   replayer.addEventListener('click', replayChord);
 
-
   delaytimer.addEventListener('input', setDelay);
+
+  inversion.addEventListener('input',setInversions);
 
   octaveshift.addEventListener('input',setOctaveShift);
 
@@ -492,6 +525,7 @@
   var autoPlayId = 69;
 
   var octshift = 0;
+  var doInversions = false;
 
   const chordData = JSON.parse('{"Triads": {"C": {"Imaj": ["C4","E4","G4"],"II-": ["D4","F4","A4"],"III-": ["E4","G4","B4"],"IVmaj": ["F4","A4","C5"],"Vmaj": ["G3","B3","D4"],"VI-": ["A3","C4","E4"],"VIIo": ["B3","D4","F4"]},"G": {"Imaj": ["G3","B3","D4"],"II-": ["A3","C4","E4"],"III-": ["B3","D4","F#4"],"IVmaj": ["C4","E4","G4"],"Vmaj": ["D4","F#4","A4"],"VI-": ["E4","G4","B4"],"VIIo": ["F#4","A4","C5"]},"D": {"Imaj": ["D4","F#4","A4"],"II-": ["E4","G4","B4"],"III-": ["F#4","A4","C#5"],"IVmaj": ["G4","B4","D5"],"Vmaj": ["A3","C#4","E4"],"VI-": ["B3","D4","F#4"],"VIIo": ["C#4","E4","G4"]},"A": {"Imaj": ["A3","C#4","E4"],"II-": ["B3","D4","F#4"],"III-": ["C#4","E4","G#4"],"IVmaj": ["D4","F#4","A4"],"Vmaj": ["E4","G#4","B4"],"VI-": ["F#4","A4","C#5"],"VIIo": ["G#4","B4","D5"]},"E": {"Imaj": ["E4","G#4","B4"],"II-": ["F#4","A4","C#5"],"III-": ["G#3","B3","D#4"],"IVmaj": ["A3","C#4","E4"],"Vmaj": ["B3","D#4","F#4"],"VI-": ["C#4","E4","G#4"],"VIIo": ["D#4","F#4","A4"]},"B": {"Imaj": ["B3","D#4","F#4"],"II-": ["C#4","E4","G#4"],"III-": ["D#4","F#4","A#4"],"IVmaj": ["E4","G#4","B4"],"Vmaj": ["F#4","A#4","C#5"],"VI-": ["G#4","B4","D#5"],"VIIo": ["A#3","C#4","E4"]},"Cb": {"Imaj": ["Cb3","Eb4","Gb4"],"II-": ["Db4","Fb4","Ab4"],"III-": ["Eb4","Gb4","Bb4"],"IVmaj": ["Fb4","Ab4","Cb4"],"Vmaj": ["Gb4","Bb4","Db5"],"VI-": ["Ab4","Cb4","Eb5"],"VIIo": ["Bb3","Db4","Fb4"]},"F#": {"Imaj": ["F#4","A#4","C#5"],"II-": ["G#4","B4","D#5"],"III-": ["A#3","C#4","E#4"],"IVmaj": ["B3","D#4","F#4"],"Vmaj": ["C#4","E#4","G#4"],"VI-": ["D#4","F#4","A#4"],"VIIo": ["E#4","G#4","B4"]},"Gb": {"Imaj": ["Gb4","Bb4","Db5"],"II-": ["Ab4","Cb4","Eb5"],"III-": ["Bb3","Db4","F4"],"IVmaj": ["Cb4","Eb4","Gb4"],"Vmaj": ["Db4","F4","Ab4"],"VI-": ["Eb4","Gb4","Bb4"],"VIIo": ["F4","Ab4","Cb4"]},"C#": {"Imaj": ["C#4","E#4","G#4"],"II-": ["D#4","F#4","A#4"],"III-": ["E#4","G#4","B#4"],"IVmaj": ["F#4","A#4","C#5"],"Vmaj": ["G#3","B#3","D#4"],"VI-": ["A#3","C#4","E#4"],"VIIo": ["B#3","D#4","F#4"]},"Db": {"Imaj": ["Db4","F4","Ab4"],"II-": ["Eb4","Gb4","Bb4"],"III-": ["F4","Ab4","C4"],"IVmaj": ["Gb4","Bb4","Db5"],"Vmaj": ["Ab3","C3","Eb4"],"VI-": ["Bb3","Db4","F4"],"VIIo": ["C3","Eb4","Gb4"]},"Ab": {"Imaj": ["Ab3","C4","Eb4"],"II-": ["Bb3","Db4","F4"],"III-": ["C4","Eb4","G4"],"IVmaj": ["Db4","F4","Ab4"],"Vmaj": ["Eb4","G4","Bb4"],"VI-": ["F4","Ab4","C5"],"VIIo": ["G4","Bb4","Db5"]},"Eb": {"Imaj": ["Eb4","G4","Bb4"],"II-": ["F4","Ab4","C5"],"III-": ["G3","Bb3","D4"],"IVmaj": ["Ab3","C4","Eb4"],"Vmaj": ["Bb3","D4","F4"],"VI-": ["C4","Eb4","G4"],"VIIo": ["D4","F4","Ab4"]},"Bb": {"Imaj": ["Bb3","D4","F4"],"II-": ["C4","Eb4","G4"],"III-": ["D4","F4","A4"],"IVmaj": ["Eb4","G4","Bb4"],"Vmaj": ["F4","A4","C5"],"VI-": ["G4","Bb4","D5"],"VIIo": ["A3","C4","Eb4"]},"F": {"Imaj": ["F4","A4","C5"],"II-": ["G4","Bb4","D5"],"III-": ["A3","C4","E4"],"IVmaj": ["Bb3","D4","F4"],"Vmaj": ["C4","E4","G4"],"VI-": ["D4","F4","A4"],"VIIo": ["E4","G4","Bb4"]}}}');
 

@@ -1,184 +1,294 @@
-body{
-	font-family: 'Fira Sans', sans-serif;
-	background: linear-gradient(#e66465, #9198e5);
-	color: white;
+body {
+    font-family: 'Fira Sans', sans-serif;
+    background: linear-gradient(#e66465, #9198e5);
+    color: white;
 }
 
 .hide {
-	max-height: 0.25em !important;
+    max-height: 0.25em !important;
 }
 
-.dropdown{
-	background: linear-gradient(to right, #8e3b46, #64171a);
-	font-size: 16px;
-	width: 250px;
-	margin: 1em;
-	display: inline-block;
-	border-radius: 0.5rem;
-	user-select: none;
+.dropdown {
+    background: linear-gradient(to right, #8e3b46, #64171a);
+    font-size: 16px;
+    width: 250px;
+    margin: 1em;
+    display: inline-block;
+    border-radius: 0.5rem;
+    user-select: none;
 }
 
-.dropdown .title{
-	margin: .3em .3em .3em .3em;	
-	width: 100%;
+.dropdown .title {
+    margin: .5em .5em .5em .5em;
+    width: 100%;
 }
 
-.dropdown .title .fa-angle-right{
-	float: right;
-	margin-right: .7em;
-	transition: transform .6s;
+.dropdown .title .fa-angle-right {
+    float: right;
+    margin-right: .7em;
+    transition: transform .6s;
 }
 
-.dropdown .menu{
-	transition: max-height 0.5s ease-in-out;
-	position: relative;
-	overflow: hidden;
-	z-index: 10;
+.dropdown .menu {
+    transition: max-height 0.5s ease-in-out;
+    position: relative;
+    overflow: hidden;
+    z-index: 10;
 }
 
-.dropdown .menu .option{
-	background-color: rgba(0, 0, 0, 0.5);
-	transition: background-color 0.25s ease-in-out;
-	margin: .3em .3em .3em .3em;
-	border-radius: 0.25rem;
-	font-size: 12px;
-	margin-top: 0.3em;
+.dropdown .menu .option {
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: background-color 0.25s ease-in-out;
+    margin: .3em .3em .3em .3em;
+    border-radius: 0.25rem;
+    font-size: 12px;
+    margin-top: 0.3em;
 }
 
-.dropdown .menu .selected{
-	margin: .3em .3em .3em .3em;
-	font-size: 12px;
-	border-radius: 0.25rem;
-	margin-top: 0.3em;
-	background: rgba(252, 208, 161, 0.3);
-	transition: background-color 0.25s ease-in-out;
+.dropdown .menu .selected {
+    margin: .3em .3em .3em .3em;
+    font-size: 12px;
+    border-radius: 0.25rem;
+    margin-top: 0.3em;
+    background: rgba(252, 208, 161, 0.3);
+    transition: background-color 0.25s ease-in-out;
 }
 
-.dropdown .menu .unselected{
-	margin: .3em .3em .3em .3em;
-	font-size: 12px;
-	border-radius: 0.25rem;
-	margin-top: 0.3em;
-	transition: background-color 0.25s ease-in-out;
+.dropdown .menu .unselected {
+    margin: .3em .3em .3em .3em;
+    font-size: 12px;
+    border-radius: 0.25rem;
+    margin-top: 0.3em;
+    transition: background-color 0.25s ease-in-out;
 }
 
-.dropdown .menu .batchselect{
-	background-color: rgba(252, 208, 181, 0.5);
-	margin: .3em .3em .3em .3em;
-	font-size: 16px;
-	border-radius: 0.25rem;
-	margin-top: 0.3em;
-	transition: background-color 0.25s ease-in-out;
+.dropdown .menu .batchselect {
+    background-color: rgba(252, 208, 181, 0.5);
+    margin: .3em .3em .3em .3em;
+    font-size: 16px;
+    border-radius: 0.25rem;
+    margin-top: 0.3em;
+    transition: background-color 0.25s ease-in-out;
 }
 
-.dropdown .menu .option:hover{
-	background: rgba(0,0,0,0.2);
-	transition: background-color 0.25s ease-in-out;
+.dropdown .menu .option:hover {
+    background: rgba(0, 0, 0, 0.2);
+    transition: background-color 0.25s ease-in-out;
 }
 
-.dropdown .menu .selected:hover{
-	background: rgba(252, 208, 161, 0.25);
-	transition: background-color 0.25s ease-in-out;
+.dropdown .menu .selected:hover {
+    background: rgba(252, 208, 161, 0.25);
+    transition: background-color 0.25s ease-in-out;
 }
 
-.dropdown .menu .unselected:hover{
-	background: rgba(252, 208, 161, 0.15);
-	transition: background-color 0.25s ease-in-out;
+.dropdown .menu .unselected:hover {
+    background: rgba(252, 208, 161, 0.15);
+    transition: background-color 0.25s ease-in-out;
 }
 
-.dropdown .menu .batchselect:hover{
-	background: rgba(252, 208, 181, 0.27);
-	transition: background-color 0.25s ease-in-out;
+.dropdown .menu .batchselect:hover {
+    background: rgba(252, 208, 181, 0.27);
+    transition: background-color 0.25s ease-in-out;
 }
 
-.button{
-	background: linear-gradient(to left, #2B193D,#654880);
-	border-radius: 0.5rem;
-	font-size: 16px;
-	width: 250px;
-	height: 50px;
-	margin: 1em;
-	text-align: center;
-	vertical-align: middle;
-	display: inline-block;
-	line-height: 3em;
-	user-select: none;
-	position: relative;
+.button {
+    background: linear-gradient(to left, #2B193D, #654880);
+    border-radius: 0.5rem;
+    font-size: 16px;
+    width: 250px;
+    height: 50px;
+    margin: 1em;
+    text-align: center;
+    vertical-align: middle;
+    display: inline-block;
+    line-height: 3em;
+    user-select: none;
+    position: relative;
 }
 
-.button:hover{
-	background: linear-gradient(to left, rgba(43,25,61,1),#654880FF);
+.button:hover {
+    background: linear-gradient(to left, rgba(43, 25, 61, 1), #654880FF);
 }
 
-
-.alphacontainer{
-	user-select: none;
-	transition: opacity 0.25s ease-in-out;
+.alphacontainer {
+    user-select: none;
+    transition: opacity 0.25s ease-in-out;
 }
 
-@media not all and (hover: none){ 
-	.alphacontainer:hover{
-		transition: opacity 0.25s ease-in-out;
-		opacity: 50%;
-	}
+.alphacontainer:hover {
+    transition: opacity 0.25s ease-in-out;
+    opacity: 50%;
 }
 
-.pointerCursor:hover{
-	cursor: pointer;
+.alphacontainer:focus {
+    transition: opacity 0.25s ease-in-out;
+    opacity: 100%;
 }
 
-.rotate-90{
-	transform: rotate(90deg);
+.pointerCursor:hover {
+    cursor: pointer;
 }
 
-p.clear{
-	clear: both;
+.rotate-90 {
+    transform: rotate(90deg);
 }
 
-.input-container{
-	background: linear-gradient(to right, #8e3b46, #64171a);
-	border-radius: 0.5rem;
-	padding: 0.1em;
-	display: inline-block;
-	position:relative;
-	margin:0.2em;
-	margin-bottom: 0.2em;
-	width: 250px;
-}
-.input-container label{
-	position:absolute;
-	top:0px;
-	left:0px;
-	margin: 0.3em;
-	font-size:12px;
-	color:#fff;	
-	transition: all 0.25s ease-in-out;
-}
-.input-container input{ 
-  border:0;
-  border-bottom:1px solid #2B193D;  
-  background:transparent;
-  width:95%;
-  padding:8px 0 5px 0;
-  font-size:16px;
-  color:#fff;
-  font-family: 'Fira Sans', sans-serif;
-  transition: all 0.25s ease-in-out;
-}
-.input-container input:focus{ 
- border:none;	
- outline:none;
- border-bottom:1px solid #9198e5;
- transition: all 0.25s ease-in-out;	
+p.clear {
+    clear: both;
 }
 
-.input-container input:focus ~ label,
-.input-container input:valid ~ label{
-	top:-1.8em;
-	font-size:10px;
-	
+.input-container {
+    background: linear-gradient(to right, #8e3b46, #64171a);
+    border-radius: 0.5rem;
+    padding: 0.1em;
+    display: inline-block;
+    position: relative;
+    margin: 0.5em;
+    margin-bottom: 0.2em;
+    width: 250px;
 }
 
+.input-container label {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    margin: 0.3em;
+    font-size: 12px;
+    color: #fff;
+    transition: all 0.25s ease-in-out;
+}
+
+.input-container input[type=number] {
+    border: 0;
+    border-bottom: 1px solid #2B193D;
+    background: transparent;
+    width: 95%;
+    padding: 12px 0 5px 0;
+    font-size: 16px;
+    color: #fff;
+    transition: all 0.25s ease-in-out;
+}
+
+.input-container input[type=range] {
+    border: 0;
+    border-bottom: 1px solid #2B193D;
+    background: transparent;
+    width: 95%;
+    padding: 12px 0 5px 0;
+    font-size: 16px;
+    color: #fff;
+    transition: all 0.25s ease-in-out;
+}
+
+.input-container input:focus {
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #9198e5;
+    transition: all 0.25s ease-in-out;
+}
+
+.input-container input:focus~label,
+.input-container input:valid~label {
+    top: -1.8em;
+    font-size: 10px;
+}
+
+.neumorphism-toggle {
+    display: inline-block;
+    position: relative;
+    width: 250px;
+    margin: 0.5em;
+  }
+
+  .neumorphism-toggle input {
+    display: none;
+  }
+  .neumorphism-toggle input + label {
+    background: linear-gradient(to right, #8e3b46, #64171a);
+    border-radius: 9px;
+    min-width: 208px;
+    display: block;
+    cursor: pointer;
+    position: relative;
+    height: 44px;
+    
+  }
+  .neumorphism-toggle input + label:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    background: linear-gradient(to right, #8e3b6b, #641741);
+    opacity: var(--gradient, 0);
+    transition: opacity 0.4s;
+  }
+  .neumorphism-toggle input + label .switch {
+    position: relative;
+    display: inline-block;
+    z-index: 1;
+    vertical-align: middle;
+    height: 22px;
+    width: 40px;
+    border-radius: 11px;
+    background: #ECEFFC;
+  }
+  .neumorphism-toggle input + label .switch:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #4F97FF, #275EFE);
+    opacity: var(--gradient, 0);
+    transition: opacity 0.4s;
+  }
+  .neumorphism-toggle input + label .switch .dot {
+    background: #D1D6EE;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    left: -1px;
+    top: -1px;
+    transform: translateX(var(--offset, 0));
+    transition: transform 0.4s, box-shadow 0.4s;
+  }
+  .neumorphism-toggle input + label .switch .dot:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    background: linear-gradient(160deg, #F1F4FF, #F9FAFF);
+    opacity: var(--gradient, 0);
+    transition: opacity 0.4s;
+  }
+  .neumorphism-toggle input + label span {
+    font-size: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    z-index: 1;
+    position: relative;
+    margin-left: 12px;
+    transition: color 0.4s;
+  }
 
 
-
+  .neumorphism-toggle input:not(:checked) + label + span {
+    opacity: 1;
+  }
+  .neumorphism-toggle input:checked + label {
+    --offset: 18px;
+    --text: #404660;
+    --gradient: 1;
+    --shadow: rgba(0, 6, 39, .1);
+    --light-shadow: rgba(255, 255, 255, .8);
+    --light-shadow-2: rgba(255, 255, 255, .1);
+  }
