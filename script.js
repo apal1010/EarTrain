@@ -51,7 +51,7 @@
   function checkbatch(batch){
     all = true;
     none = true;
-    for (let index = 1; index < 8; index++) {
+    for (let index = 1; index < (batch==='t'?8:10); index++) {
       const element = document.getElementById(batch+index.toString());
       if(element.className.indexOf('unselected')!==-1){
         all = false;
@@ -59,7 +59,7 @@
         none = false;
       }
     }
-    if(batch='t'){
+    if(batch==='t'){
       if(all){
         tbatch=true;
       }else if(none){
@@ -105,7 +105,7 @@
           batch=sbatch;
           sbatch = !sbatch;
         }
-        for (let index = 1; index < 8; index++) {
+        for (let index = 1; index < (id=='t'?8:10); index++) {
           const element = document.getElementById(id+index.toString());
           setselect(element,!batch);
         }
@@ -163,8 +163,8 @@
       return;
     }else{
       firstChord = (chordData["Triads"][key]["Imaj"]).slice();
-      secondChord = (chordData["Triads"][key]["IVmaj"]).slice();
-      thirdChord = (chordData["Triads"][key]["Vmaj"]).slice();
+      secondChord = (chordData["Sevenths"][key]["V7"]).slice();
+      thirdChord = (chordData["Triads"][key]["Imaj"]).slice();
       playChord(firstChord);
       window.setTimeout(playChord,500,secondChord);
       window.setTimeout(playChord,1000,thirdChord);
@@ -343,7 +343,14 @@
     for (let index = 1; index < 8; index++) {
       const element = document.getElementById('t'+index.toString());
       if(element.className.indexOf('unselected')==-1){
-        allowedChords.push(index-1);
+        allowedChords.push(element.textContent);
+      }
+    }
+
+    for (let index = 1; index < 10; index++) {
+      const element = document.getElementById('s'+index.toString());
+      if(element.className.indexOf('unselected')==-1){
+        allowedChords.push(element.textContent);
       }
     }
 
@@ -352,17 +359,29 @@
       return chordToPlay;
     }
 
-    var selectedChord = triads[allowedChords[Math.floor(Math.random()*allowedChords.length)]];
-    chordToPlay = (chordData["Triads"][chosenkey][selectedChord]).slice()
+    var selectedChord = allowedChords[Math.floor(Math.random()*allowedChords.length)];
+    console.log(selectedChord);
+    if(selectedChord.indexOf("7")!==-1){
+      chordToPlay = (chordData["Sevenths"][chosenkey][selectedChord]).slice();
+    }else{
+      chordToPlay = (chordData["Triads"][chosenkey][selectedChord]).slice();
+    }
 
     playedChord = selectedChord + " (";
-    playedChord += chordToPlay[0].substring(0,chordToPlay[0].length-1) + " ";
+    playedChord += chordToPlay[0].substring(0,chordToPlay[0].length-1) + (selectedChord.indexOf("7")!==-1?"7":"");
+
     if(selectedChord.indexOf("maj")!==-1){
-      playedChord += "major";
+      playedChord += " major";
     }else if(selectedChord.indexOf("-")!==-1){
-      playedChord += "minor";
+      playedChord += " minor";
+    }else if(selectedChord.indexOf("o")!==-1){
+      playedChord += " diminished";
+    }else if(selectedChord.indexOf("sus")!==-1){
+      playedChord += " suspended 4th";
+    }else if(selectedChord.indexOf("ø")!==-1){
+      playedChord += " half diminished";
     }else{
-      playedChord += "diminished";
+      playedChord += " dominant";
     }
     playedChord += ")";
 
@@ -433,7 +452,7 @@
   const keys = ['C','G','D','A','E','B','Cb','F#','Gb','C#','Db','Ab','Eb','Bb','F'];
   const allnotes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
   const triads = ['Imaj','II-','III-','IVmaj','Vmaj','VI-','VIIo'];
-  const sevenths = [];
+  const sevenths = ['Imaj7','II-7','III-7','IVmaj7','V7','V7sus4','VI-7','VIIø7','VIIo7'];
   const tenchords = ['Major','Minor','Augmented','Diminished','Major 7th','Minor 7th','Dominant 7th','Half Diminished 7th','Diminished 7th','Dom 7 Sus 4'];
   const chordIntervals = [[4,7],[3,7],[4,8],[3,6],[4,7,11],[3,7,10,],[4,7,10],[3,6,10],[3,6,9],[5,7,10]];
 
@@ -495,7 +514,7 @@
   var octshift = 0;
   var doInversions = false;
 
-  const chordData = JSON.parse('{"Triads": {"C": {"Imaj": ["C4","E4","G4"],"II-": ["D4","F4","A4"],"III-": ["E4","G4","B4"],"IVmaj": ["F4","A4","C5"],"Vmaj": ["G3","B3","D4"],"VI-": ["A3","C4","E4"],"VIIo": ["B3","D4","F4"]},"G": {"Imaj": ["G3","B3","D4"],"II-": ["A3","C4","E4"],"III-": ["B3","D4","F#4"],"IVmaj": ["C4","E4","G4"],"Vmaj": ["D4","F#4","A4"],"VI-": ["E4","G4","B4"],"VIIo": ["F#4","A4","C5"]},"D": {"Imaj": ["D4","F#4","A4"],"II-": ["E4","G4","B4"],"III-": ["F#4","A4","C#5"],"IVmaj": ["G4","B4","D5"],"Vmaj": ["A3","C#4","E4"],"VI-": ["B3","D4","F#4"],"VIIo": ["C#4","E4","G4"]},"A": {"Imaj": ["A3","C#4","E4"],"II-": ["B3","D4","F#4"],"III-": ["C#4","E4","G#4"],"IVmaj": ["D4","F#4","A4"],"Vmaj": ["E4","G#4","B4"],"VI-": ["F#4","A4","C#5"],"VIIo": ["G#4","B4","D5"]},"E": {"Imaj": ["E4","G#4","B4"],"II-": ["F#4","A4","C#5"],"III-": ["G#3","B3","D#4"],"IVmaj": ["A3","C#4","E4"],"Vmaj": ["B3","D#4","F#4"],"VI-": ["C#4","E4","G#4"],"VIIo": ["D#4","F#4","A4"]},"B": {"Imaj": ["B3","D#4","F#4"],"II-": ["C#4","E4","G#4"],"III-": ["D#4","F#4","A#4"],"IVmaj": ["E4","G#4","B4"],"Vmaj": ["F#4","A#4","C#5"],"VI-": ["G#4","B4","D#5"],"VIIo": ["A#3","C#4","E4"]},"Cb": {"Imaj": ["Cb3","Eb4","Gb4"],"II-": ["Db4","Fb4","Ab4"],"III-": ["Eb4","Gb4","Bb4"],"IVmaj": ["Fb4","Ab4","Cb4"],"Vmaj": ["Gb4","Bb4","Db5"],"VI-": ["Ab4","Cb4","Eb5"],"VIIo": ["Bb3","Db4","Fb4"]},"F#": {"Imaj": ["F#4","A#4","C#5"],"II-": ["G#4","B4","D#5"],"III-": ["A#3","C#4","E#4"],"IVmaj": ["B3","D#4","F#4"],"Vmaj": ["C#4","E#4","G#4"],"VI-": ["D#4","F#4","A#4"],"VIIo": ["E#4","G#4","B4"]},"Gb": {"Imaj": ["Gb4","Bb4","Db5"],"II-": ["Ab4","Cb4","Eb5"],"III-": ["Bb3","Db4","F4"],"IVmaj": ["Cb4","Eb4","Gb4"],"Vmaj": ["Db4","F4","Ab4"],"VI-": ["Eb4","Gb4","Bb4"],"VIIo": ["F4","Ab4","Cb4"]},"C#": {"Imaj": ["C#4","E#4","G#4"],"II-": ["D#4","F#4","A#4"],"III-": ["E#4","G#4","B#4"],"IVmaj": ["F#4","A#4","C#5"],"Vmaj": ["G#3","B#3","D#4"],"VI-": ["A#3","C#4","E#4"],"VIIo": ["B#3","D#4","F#4"]},"Db": {"Imaj": ["Db4","F4","Ab4"],"II-": ["Eb4","Gb4","Bb4"],"III-": ["F4","Ab4","C4"],"IVmaj": ["Gb4","Bb4","Db5"],"Vmaj": ["Ab3","C3","Eb4"],"VI-": ["Bb3","Db4","F4"],"VIIo": ["C3","Eb4","Gb4"]},"Ab": {"Imaj": ["Ab3","C4","Eb4"],"II-": ["Bb3","Db4","F4"],"III-": ["C4","Eb4","G4"],"IVmaj": ["Db4","F4","Ab4"],"Vmaj": ["Eb4","G4","Bb4"],"VI-": ["F4","Ab4","C5"],"VIIo": ["G4","Bb4","Db5"]},"Eb": {"Imaj": ["Eb4","G4","Bb4"],"II-": ["F4","Ab4","C5"],"III-": ["G3","Bb3","D4"],"IVmaj": ["Ab3","C4","Eb4"],"Vmaj": ["Bb3","D4","F4"],"VI-": ["C4","Eb4","G4"],"VIIo": ["D4","F4","Ab4"]},"Bb": {"Imaj": ["Bb3","D4","F4"],"II-": ["C4","Eb4","G4"],"III-": ["D4","F4","A4"],"IVmaj": ["Eb4","G4","Bb4"],"Vmaj": ["F4","A4","C5"],"VI-": ["G4","Bb4","D5"],"VIIo": ["A3","C4","Eb4"]},"F": {"Imaj": ["F4","A4","C5"],"II-": ["G4","Bb4","D5"],"III-": ["A3","C4","E4"],"IVmaj": ["Bb3","D4","F4"],"Vmaj": ["C4","E4","G4"],"VI-": ["D4","F4","A4"],"VIIo": ["E4","G4","Bb4"]}}}');
+  const chordData = JSON.parse('{"Triads": {"C": {"Imaj": ["C4","E4","G4"],"II-": ["D4","F4","A4"],"III-": ["E4","G4","B4"],"IVmaj": ["F4","A4","C5"],"Vmaj": ["G3","B3","D4"],"VI-": ["A3","C4","E4"],"VIIo": ["B3","D4","F4"]    },    "G": {"Imaj": ["G3","B3","D4"],"II-": ["A3","C4","E4"],"III-": ["B3","D4","F#4"],"IVmaj": ["C4","E4","G4"],"Vmaj": ["D4","F#4","A4"],"VI-": ["E4","G4","B4"],"VIIo": ["F#4","A4","C5"]    },    "D": {"Imaj": ["D4","F#4","A4"],"II-": ["E4","G4","B4"],"III-": ["F#4","A4","C#5"],"IVmaj": ["G4","B4","D5"],"Vmaj": ["A3","C#4","E4"],"VI-": ["B3","D4","F#4"],"VIIo": ["C#4","E4","G4"]    },    "A": {"Imaj": ["A3","C#4","E4"],"II-": ["B3","D4","F#4"],"III-": ["C#4","E4","G#4"],"IVmaj": ["D4","F#4","A4"],"Vmaj": ["E4","G#4","B4"],"VI-": ["F#4","A4","C#5"],"VIIo": ["G#4","B4","D5"]    },    "E": {"Imaj": ["E4","G#4","B4"],"II-": ["F#4","A4","C#5"],"III-": ["G#3","B3","D#4"],"IVmaj": ["A3","C#4","E4"],"Vmaj": ["B3","D#4","F#4"],"VI-": ["C#4","E4","G#4"],"VIIo": ["D#4","F#4","A4"]    },    "B": {"Imaj": ["B3","D#4","F#4"],"II-": ["C#4","E4","G#4"],"III-": ["D#4","F#4","A#4"],"IVmaj": ["E4","G#4","B4"],"Vmaj": ["F#4","A#4","C#5"],"VI-": ["G#4","B4","D#5"],"VIIo": ["A#3","C#4","E4"]    },    "Cb": {"Imaj": ["Cb3","Eb4","Gb4"],"II-": ["Db4","Fb4","Ab4"],"III-": ["Eb4","Gb4","Bb4"],"IVmaj": ["Fb4","Ab4","Cb4"],"Vmaj": ["Gb4","Bb4","Db5"],"VI-": ["Ab4","Cb4","Eb5"],"VIIo": ["Bb3","Db4","Fb4"]    },    "F#": {"Imaj": ["F#4","A#4","C#5"],"II-": ["G#4","B4","D#5"],"III-": ["A#3","C#4","E#4"],"IVmaj": ["B3","D#4","F#4"],"Vmaj": ["C#4","E#4","G#4"],"VI-": ["D#4","F#4","A#4"],"VIIo": ["E#4","G#4","B4"]    },    "Gb": {"Imaj": ["Gb4","Bb4","Db5"],"II-": ["Ab4","Cb4","Eb5"],"III-": ["Bb3","Db4","F4"],"IVmaj": ["Cb4","Eb4","Gb4"],"Vmaj": ["Db4","F4","Ab4"],"VI-": ["Eb4","Gb4","Bb4"],"VIIo": ["F4","Ab4","Cb4"]    },    "C#": {"Imaj": ["C#4","E#4","G#4"],"II-": ["D#4","F#4","A#4"],"III-": ["E#4","G#4","B#4"],"IVmaj": ["F#4","A#4","C#5"],"Vmaj": ["G#3","B#3","D#4"],"VI-": ["A#3","C#4","E#4"],"VIIo": ["B#3","D#4","F#4"]    },    "Db": {"Imaj": ["Db4","F4","Ab4"],"II-": ["Eb4","Gb4","Bb4"],"III-": ["F4","Ab4","C4"],"IVmaj": ["Gb4","Bb4","Db5"],"Vmaj": ["Ab3","C3","Eb4"],"VI-": ["Bb3","Db4","F4"],"VIIo": ["C3","Eb4","Gb4"]    },    "Ab": {"Imaj": ["Ab3","C4","Eb4"],"II-": ["Bb3","Db4","F4"],"III-": ["C4","Eb4","G4"],"IVmaj": ["Db4","F4","Ab4"],"Vmaj": ["Eb4","G4","Bb4"],"VI-": ["F4","Ab4","C5"],"VIIo": ["G4","Bb4","Db5"]    },    "Eb": {"Imaj": ["Eb4","G4","Bb4"],"II-": ["F4","Ab4","C5"],"III-": ["G3","Bb3","D4"],"IVmaj": ["Ab3","C4","Eb4"],"Vmaj": ["Bb3","D4","F4"],"VI-": ["C4","Eb4","G4"],"VIIo": ["D4","F4","Ab4"]    },    "Bb": {"Imaj": ["Bb3","D4","F4"],"II-": ["C4","Eb4","G4"],"III-": ["D4","F4","A4"],"IVmaj": ["Eb4","G4","Bb4"],"Vmaj": ["F4","A4","C5"],"VI-": ["G4","Bb4","D5"],"VIIo": ["A3","C4","Eb4"]    },    "F": {"Imaj": ["F4","A4","C5"],"II-": ["G4","Bb4","D5"],"III-": ["A3","C4","E4"],"IVmaj": ["Bb3","D4","F4"],"Vmaj": ["C4","E4","G4"],"VI-": ["D4","F4","A4"],"VIIo": ["E4","G4","Bb4"]    }    },"Sevenths": {    "C": {"Imaj7": ["C4","E4","G4","B4"],"II-7": ["D4","F4","A4","C5"],"III-7": ["E4","G4","B4","D5"],"IVmaj7": ["F3","A3","C4","E4"],"V7": ["G3","B3","D4","F4"],"V7sus4": ["G3","C4","D4","F4"],"VI-7": ["A3","C4","E4","G4"],"VIIø7": ["B3","D4","F4","A4"],	"VIIo7": ["B3","D4","F4","Ab4"]    },    "G": {"Imaj7": ["G3","B3","D4","F#4"],"II-7": ["A3","C4","E4","G4"],"III-7": ["B3","D4","F#4","A4"],"IVmaj7": ["C4","E4","G4","B4"],"V7": ["D4","F#4","A4","C5"],"V7sus4": ["D4","G4","A4","C5"],"VI-7": ["E4","G4","B4","D5"],"VIIø7": ["F#4","A4","C5","E5"],	"VIIo7": ["F#4","A4","C5","Eb5"]    },    "D": {"Imaj7": ["D4","F#4","A4","C#5"],"II-7": ["E4","G4","B4","D5"],"III-7": ["F#3","A3","C#4","E4"],"IVmaj7": ["G3","B3","D4","F#4"],"V7": ["A3","C#4","E4","G4"],"V7sus4": ["A3","D4","E4","G4"],"VI-7": ["B3","D4","F#4","A4"],"VIIø7": ["C#4","E4","G4","B4"],"VIIo7": ["C#4","E4","G4","Bb4"]    },    "A": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],"VIIø7": ["G#4","B4","D5","F#5"],"VIIo": ["G#4","B4","D5","F5"]    },    "E": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],"VIIø7": ["G#4","B4","D5","F#5"],"VIIo": ["G#4","B4","D5","F5"]    },    "B": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],"VIIø7": ["G#4","B4","D5","F#5"],"VIIo": ["G#4","B4","D5","F5"]    },    "Cb": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],"VIIø7": ["G#4","B4","D5","F#5"],"VIIo": ["G#4","B4","D5","F5"]    },    "F#": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],"VIIø7": ["G#4","B4","D5","F#5"],"VIIo": ["G#4","B4","D5","F5"]    },    "Gb": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],"VIIø7": ["G#4","B4","D5","F#5"],"VIIo": ["G#4","B4","D5","F5"]    },    "C#": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],"VIIø7": ["G#4","B4","D5","F#5"],"VIIo": ["G#4","B4","D5","F5"]    },    "Db": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],"VIIø7": ["G#4","B4","D5","F#5"],"VIIo": ["G#4","B4","D5","F5"]    },    "Ab": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],"VIIø7": ["G#4","B4","D5","F#5"],"VIIo": ["G#4","B4","D5","F5"]    },    "Eb": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],"VIIø7": ["G#4","B4","D5","F#5"],"VIIo": ["G#4","B4","D5","F5"]    },    "Bb": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],"VIIø7": ["G#4","B4","D5","F#5"],"VIIo": ["G#4","B4","D5","F5"]    },    "F": {"Imaj7": ["A3","C#4","E4","G#4"],"II-7": ["B3","D4","F#4","A4"],"III-7": ["C#4","E4","G#4","B4"],"IVmaj7": ["D4","F#4","A4","C#5"],"V7": ["E4","G#4","B4","D5"],"V7sus4": ["E4","A4","B4","D5"],"VI-7": ["F#4","A4","C#5","E5"],  "VIIø7": ["G#4","B4","D5","F#5"],  "VIIo": ["G#4","B4","D5","F5"]    }}}');
 
   const mySound = new sound("obi-wan-hello-there.mp3");
   //create a synth and connect it to the main output (your speakers)
