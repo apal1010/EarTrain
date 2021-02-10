@@ -190,12 +190,13 @@
     e = document.getElementById('button');
     autoPlaying = false;
     window.clearTimeout(autoPlayId);
-    document.getElementById('button').textContent = "Start Playing Chords";
+    document.getElementById('button').childNodes[0].nodeValue = "Start Playing Chords";
     autoPlayerReady = true;
     e.removeEventListener('click', stopAutoPlayer);
     e.addEventListener('click', playnoise);
     document.body.onkeydown = function(e){
       if(e.code === "Space"){
+          e.preventDefault();
           playnoise(e);
       }else if(e.code === "KeyR"){
         replayChord(e);
@@ -209,11 +210,12 @@
     if(autoPlayerReady){
       autoPlaying = true;
       autoPlayerReady = false;
-      e.textContent = "Pause";
+      e.childNodes[0].nodeValue = "Pause";
       e.removeEventListener('click', playnoise);
       e.addEventListener('click', stopAutoPlayer);
       document.body.onkeydown = function(e){
         if(e.code === "Space"){
+          e.preventDefault();
             stopAutoPlayer(e);
         }else if(e.code === "KeyR"){
           replayChord(e);
@@ -245,13 +247,13 @@
   function handleButton(e){
     if(!autoPlaying){
       if(e.target.textContent.indexOf('Play')!==-1){
-        e.target.textContent = 'Reveal Chord';
+        e.target.childNodes[0].nodeValue = 'Reveal Chord';
       }else{
-        e.target.textContent = 'Play Chord';
+        e.target.childNodes[0].nodeValue = 'Play Chord';
       }
     }else{
       document.querySelector('.dropdown .title').dispatchEvent(new Event('change'));
-      e.target.textContent = 'Pause';
+      e.target.childNodes[0].nodeValue = 'Pause';
     }
   }
 
@@ -390,9 +392,6 @@
     //console.log(selectedChord);
 
     return chordToPlay;
-    
-
-    
   }
 
   function replayChord(e){
@@ -437,12 +436,12 @@
     num = Math.floor(num*1000);
     autoPlayerReady = num!==0;
     if(autoPlayerReady){
-      document.getElementById('button').textContent = "Start Playing Chords";
+      document.getElementById('button').childNodes[0].nodeValue = "Start Playing Chords";
     }else{
       stopAutoPlayer(e);
       autoPlayerReady = false;
       played = false;
-      document.getElementById('button').textContent = "Play Chord";
+      document.getElementById('button').childNodes[0].nodeValue = "Play Chord";
     }
     delay = num;
   }
@@ -475,6 +474,7 @@
   button.addEventListener('reveal', handleButton);
   document.body.onkeydown = function(e){
     if(e.code === "Space"){
+        e.preventDefault();
         playnoise(e);
     }else if(e.code === "KeyR"){
       replayChord(e);

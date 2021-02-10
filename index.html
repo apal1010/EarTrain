@@ -30,7 +30,7 @@
    <div class="content" id = "stuff">
     <h1 style="text-align:center;">Ear Training<h1>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.76/Tone.js"></script>
-      <div class='dropdown'>
+      <div class='dropdown noSelect'>
         <div class='title pointerCursor' id = 'key'>Select a key<b class="fa fa-angle-right">></b></div>
         
         <div class='menu pointerCursor hide'>
@@ -54,7 +54,7 @@
     
       </div>
       
-      <div class='dropdown'>
+      <div class='dropdown noSelect'>
         <div class='title pointerCursor' id = 'instrument'>Select an instrument <b class="fa fa-angle-right">></b></div>
         
         <div class='menu pointerCursor hide'>
@@ -65,7 +65,7 @@
     
       </div>
 
-      <div class='dropdown'>
+      <div class='dropdown noSelect'>
         <div class='title pointerCursor' id = 'order'>Select possible chords <b class="fa fa-angle-right">></b></div>
         
         <div class='menu pointerCursor hide'>
@@ -97,7 +97,7 @@
         <input type="number" required="" autocomplete="off" id='delaytimer'/>
         <label>Autoplayer Delay Duration (seconds):</label>		
       </div>
-      <div class="neumorphism-toggle">
+      <div class="neumorphism-toggle noSelect">
         <input type="checkbox" id="inversion">
         <label for="inversion">
             <div class="switch">
@@ -106,7 +106,7 @@
             <span>Inversions</span>
         </label>
       </div>
-      <div class="neumorphism-toggle">
+      <div class="neumorphism-toggle noSelect">
         <input type="checkbox" id="shiftToBass">
         <label for="shiftToBass">
             <div class="switch">
@@ -117,9 +117,23 @@
       </div>
       <p></p>
       <p span class = 'clear' id='result' style="text-align: center; font-size: small;">Play a chord! </p span>
-      <div class='button pointerCursor alphacontainer' id = 'button'>Play Chord</div>
-      <div class='button pointerCursor alphacontainer' id = 'replay'>Replay last Chord</div>
+      <div class='button pointerCursor alphacontainer noSelect' id = 'button'>Play Chord<label>(Space)</label></div>
+      <div class='button pointerCursor alphacontainer noSelect' id = 'replay'>Replay last Chord<label>(R)</label></div>
       <p></p>
+      
+      <div class = "explanation-title">Hello! This webapp was designed to help you with identifying chords. Here's some info on how to use it:</div>
+      <p></p>
+
+      <div class = "explanation-container">
+        <div class = "explanation"> 
+          &#8227; Use the Key select dropdown to select a key for your chords. If you don't have one selected, or you choose any key, chords from any key will be played<br/><br/>
+          &#8227; Use the Select possible chords dropdown to select which diatonic chords are available to be played. This only has an effect if you have a specific key selected.<br/><br/>
+          &#8227; If you want chords to play automatically at a certain duration, put in the value in the autoplayer delay duration field. To disable this feature, enter 0 or leave the field blank.<br/><br/>
+          &#8227; You can toggle bass shift to play all chords an octave lower. You can also toggle chord inversions, which will change the order of the notes in the chord.<br/><br/>
+          &#8227; Use the Instrument dropdown to select an instrument. The default is a piano.<br/><br/>
+
+        </div>
+      </div>
       
       
       <script src="script.js"></script>
